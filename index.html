@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rev Auto · Collision & Body Repair in Sarasota, FL</title>
+  <meta name="description" content="Rev Auto is a family-owned body shop in Sarasota, FL: collision repair, bodywork, paint, dents and scratches, and radio installs. 12+ years repairing everyday and high-end cars. Book online." />
+  <meta name="theme-color" content="#0b0b0d" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Rev Auto · Body Shop in Sarasota" />
+  <meta property="og:description" content="Family-owned collision and body repair. Your car comes back fixed and clean. Book online." />
+  <meta property="og:image" content="assets/img/og-revauto.png" />
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script>
+    // pick the theme before first paint (no flash): saved choice, or by time of day
+    (function () {
+      var t = "auto"; try { t = localStorage.getItem("rev.theme") || "auto"; } catch (e) {}
+      var h = new Date().getHours(), byTime = h >= 7 && h < 17 ? "showroom" : (h >= 17 && h < 20) || (h >= 5 && h < 7) ? "garage" : "midnight";
+      document.documentElement.dataset.theme = t === "auto" ? byTime : t;
+      document.documentElement.dataset.choice = t;
+    })();
+  </script>
+</head>
+<body>
+  <div class="bg" aria-hidden="true"><i></i><i></i><i></i></div>
+
+  <header class="top">
+    <div class="wrap top__in">
+      <a class="brand" href="#top" aria-label="Rev Auto home"><span class="brand__mark">R</span><span class="brand__name">REV<b>AUTO</b></span></a>
+      <nav class="nav" id="nav">
+        <a href="#services">Services</a><a href="#difference">Why us</a><a href="#work">Our work</a><a href="#faq">FAQ</a><a href="#visit">Visit</a>
+      </nav>
+      <div class="theme" role="group" aria-label="Color theme">
+        <button type="button" data-set="auto" title="Matches the time of day">Auto</button>
+        <button type="button" data-set="showroom" title="Showroom: white, blue and orange" aria-label="Showroom theme"><i class="sw sw--showroom"></i></button>
+        <button type="button" data-set="garage" title="Garage: blue and orange" aria-label="Garage theme"><i class="sw sw--garage"></i></button>
+        <button type="button" data-set="midnight" title="Midnight: black and gold" aria-label="Midnight theme"><i class="sw sw--midnight"></i></button>
+      </div>
+      <a class="btn btn--accent btn--sm top__cta" href="#book">Book</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap hero__in">
+        <p class="eyebrow">Family-owned · Sarasota, FL · 12+ years</p>
+        <h1>We fix what you came for,<br /><span class="accent">and send it back better.</span></h1>
+        <p class="lead">Collision repair, bodywork and paint from a shop that puts you before the bill. Your car comes back repaired, and clean.</p>
+        <div class="hero__ctas">
+          <a class="btn btn--accent btn--lg" href="#book">Book an appointment</a>
+          <a class="btn btn--ghost btn--lg" href="#contact" data-contact="wa" data-body="Hi Rev Auto, I'd like an estimate. I can send photos of the damage.">💬 Send photos on WhatsApp</a>
+        </div>
+        <ul class="hero__facts"><li><b>12+</b><span>years of experience</span></li><li><b>High-end</b><span>to everyday cars</span></li><li><b>Clean</b><span>every car we return</span></li></ul>
+      </div>
+    </section>
+
+    <section class="section" id="difference">
+      <div class="wrap">
+        <p class="kicker">The Rev Auto difference</p>
+        <h2>Most shops fix the damage. We take care of the car.</h2>
+        <div class="grid grid--4" id="diffGrid"></div>
+      </div>
+    </section>
+
+    <section class="section section--alt" id="services">
+      <div class="wrap">
+        <p class="kicker">Services</p>
+        <h2>Bodywork is our specialty. Cars are our whole world.</h2>
+        <div class="grid grid--3" id="svcGrid"></div>
+      </div>
+    </section>
+
+    <section class="section" id="work">
+      <div class="wrap">
+        <p class="kicker">Our work</p>
+        <h2>Before, after, and everything in between.</h2>
+        <div class="gallery" id="gallery"></div>
+        <p class="center"><a class="btn btn--ghost" id="igLink" target="_blank" rel="noopener">See more on Instagram ↗</a></p>
+      </div>
+    </section>
+
+    <section class="section section--alt" id="how">
+      <div class="wrap">
+        <p class="kicker">How it works</p>
+        <h2>Three steps back to the road.</h2>
+        <ol class="steps">
+          <li><b>Book or send photos</b><span>Pick a time online, or send photos of the damage on WhatsApp.</span></li>
+          <li><b>Get a clear estimate</b><span>We inspect the car and explain exactly what it needs, and what it doesn't.</span></li>
+          <li><b>Pick it up, repaired and clean</b><span>Your car comes back fixed, and washed at no extra charge.</span></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section" id="book">
+      <div class="wrap book">
+        <div>
+          <p class="kicker">Book online</p>
+          <h2>Request an appointment.</h2>
+          <p class="muted">Tell us about your car and pick a time that works. We'll confirm by text or call. Photos of the damage help a lot: send them on WhatsApp after you book.</p>
+          <div class="cbtns"><a class="btn btn--wa" href="#contact" data-contact="wa">💬 WhatsApp</a><a class="btn btn--ghost" href="#contact" data-contact="call">📞 Call</a></div>
+        </div>
+        <form class="card form" id="bookForm" novalidate>
+          <div class="fields">
+            <label>Full name<input name="name" required autocomplete="name" /></label>
+            <label>Phone<input name="phone" type="tel" required autocomplete="tel" /></label>
+            <label class="full">Email (optional)<input name="email" type="email" autocomplete="email" /></label>
+            <label>Vehicle (year, make, model)<input name="vehicle" required placeholder="2019 Honda Accord" /></label>
+            <label>Service<select name="service" id="svcSelect" required></select></label>
+            <label>Preferred date<input name="date" type="date" required /></label>
+            <label>Preferred time<select name="time" required><option value="">Choose…</option><option>Morning (8–11 AM)</option><option>Midday (11 AM–2 PM)</option><option>Afternoon (2–5 PM)</option></select></label>
+            <label class="full">What happened? (the damage, any extra scratches you'd like us to look at)<textarea name="details" rows="4"></textarea></label>
+            <label class="check full"><input type="checkbox" name="insurance" /> <span>This is an insurance claim</span></label>
+          </div>
+          <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" />
+          <button class="btn btn--accent btn--lg" type="submit">Request appointment</button>
+          <p class="form__msg" id="bookMsg" role="status"></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="section section--alt" id="faq">
+      <div class="wrap faq">
+        <div><p class="kicker">FAQ</p><h2>Good questions.</h2><p class="muted">Ask our assistant anything about the shop, or message us directly.</p><button class="btn btn--ghost" type="button" data-open-chat>Ask the assistant</button></div>
+        <div id="faqList"></div>
+      </div>
+    </section>
+
+    <section class="section" id="visit">
+      <div class="wrap visit">
+        <div>
+          <p class="kicker">Visit</p>
+          <h2>Come see the shop.</h2>
+          <p class="addr" id="addr"></p>
+          <table class="hours" id="hours"></table>
+          <div class="cbtns" id="contact"><a class="btn btn--wa" href="#contact" data-contact="wa">💬 WhatsApp us</a><a class="btn btn--ghost" href="#contact" data-contact="call">📞 Call us</a><a class="btn btn--ghost" id="mapsLink" target="_blank" rel="noopener">Directions ↗</a></div>
+        </div>
+        <iframe class="map" id="map" title="Map to Rev Auto" loading="lazy"></iframe>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot__in">
+      <a class="brand" href="#top"><span class="brand__mark">R</span><span class="brand__name">REV<b>AUTO</b></span></a>
+      <p class="muted small">Family-owned collision & body repair · <span id="footAddr"></span> · <a id="footIg" target="_blank" rel="noopener">Instagram</a></p>
+      <p class="muted small">© <span id="year"></span> Rev Auto</p>
+    </div>
+  </footer>
+
+  <div id="assistant"></div>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/kb.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/bot.js"></script>
+</body>
+</html>
