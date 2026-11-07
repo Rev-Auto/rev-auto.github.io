@@ -70,9 +70,9 @@
       g.innerHTML = ["Before & after photos", "Paint & refinishing", "Collision repair", "Detail work", "Shop & team", "Radio installs", "Finished cars"].map((t, i) => `<div class="ph${i === 0 ? " big" : ""}"><span><b>${t}</b>Photos from @revautosrq coming soon</span></div>`).join("");
       return;
     }
-    g.innerHTML = items.map((m, i) => (/\.(mp4|webm|mov)$/i.test(m.src)
-      ? `<video class="${i === 0 ? "big" : ""}" src="assets/media/${m.src}"${m.poster ? ` poster="assets/media/${esc(m.poster)}"` : ""} muted loop playsinline autoplay preload="metadata" aria-label="${esc(m.alt || "")}"></video>`
-      : `<img class="${i === 0 ? "big" : ""}" src="assets/media/${m.src}" alt="${esc(m.alt || "Rev Auto repair")}" loading="lazy" />`)).join("");
+    g.innerHTML = items.map((m, i) => `<figure class="${i === 0 ? "big" : ""}">${/\.(mp4|webm|mov)$/i.test(m.src)
+      ? `<video src="assets/media/${m.src}"${m.poster ? ` poster="assets/media/${esc(m.poster)}"` : ""} muted loop playsinline autoplay preload="metadata" aria-label="${esc(m.alt || "")}"></video>`
+      : `<img src="assets/media/${m.src}" alt="${esc(m.alt || "Rev Auto repair")}" loading="lazy" />`}${m.caption ? `<figcaption>${esc(m.caption)}</figcaption>` : ""}</figure>`).join("");
   });
 
   // ---------- booking request -> email (Web3Forms), with WhatsApp as a backup

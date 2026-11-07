@@ -43,6 +43,9 @@ img { max-width: 100%; }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
 .brand__mark { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; font: 700 1.4rem Oswald, sans-serif; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: var(--accent-ink); transform: skewX(-8deg); }
 .brand__name { font: 700 1.4rem Oswald, sans-serif; letter-spacing: .06em; } .brand__name b { color: var(--accent); }
+.brand__logo { height: 46px; width: auto; display: block; } .brand--foot .brand__logo { height: 56px; }
+.brand__logo--dark, [data-theme="garage"] .brand__logo--light, [data-theme="midnight"] .brand__logo--light { display: none; }
+[data-theme="garage"] .brand__logo--dark, [data-theme="midnight"] .brand__logo--dark { display: block; }
 .nav { display: flex; gap: 2px; margin-left: auto; }
 .nav a { color: var(--muted); text-decoration: none; font-weight: 600; font-size: .92rem; padding: 8px 12px; border-radius: 10px; }
 .nav a:hover { color: var(--ink); background: color-mix(in srgb, var(--ink) 7%, transparent); }
@@ -68,7 +71,12 @@ img { max-width: 100%; }
 .cbtns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
 
 /* hero */
-.hero { padding: clamp(60px, 12vh, 120px) 0 60px; }
+.hero { padding: clamp(60px, 12vh, 120px) 0 60px; position: relative; overflow: hidden; }
+.hero__in { position: relative; }
+.hero__media { position: absolute; inset: 0 0 0 auto; width: 52%; -webkit-mask-image: linear-gradient(to left, #000 35%, transparent), linear-gradient(to top, transparent, #000 30%); -webkit-mask-composite: source-in; mask-image: linear-gradient(to left, #000 35%, transparent), linear-gradient(to top, transparent, #000 30%); mask-composite: intersect; opacity: .5; }
+.hero__media img { width: 100%; height: 100%; object-fit: cover; }
+[data-theme="showroom"] .hero__media { opacity: .2; }
+@media (max-width: 900px) { .hero__media { width: 100%; opacity: .16 !important; } }
 .eyebrow { display: inline-block; font-weight: 600; font-size: .85rem; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); margin: 0 0 22px; }
 .hero h1 { font-size: clamp(2.6rem, 7vw, 5.4rem); color: var(--hero-ink); }
 .lead { font-size: clamp(1.05rem, 1.8vw, 1.25rem); color: var(--muted); max-width: 620px; margin: 0 0 30px; }
@@ -93,11 +101,14 @@ img { max-width: 100%; }
 /* gallery */
 .gallery { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 210px; gap: 12px; margin-top: 28px; }
 .gallery > * { border-radius: 14px; overflow: hidden; background: var(--surface); border: 1px solid var(--line); }
-.gallery img, .gallery video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gallery img, .gallery video { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s ease; }
+.gallery figure { margin: 0; position: relative; }
+.gallery figure:hover img, .gallery figure:hover video { transform: scale(1.04); }
+.gallery figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 26px 12px 10px; color: #fff; font: 600 .85rem Inter, sans-serif; background: linear-gradient(transparent, rgba(0, 0, 0, .72)); pointer-events: none; }
 .gallery .big { grid-column: span 2; grid-row: span 2; }
 .ph { display: grid; place-items: center; text-align: center; padding: 16px; color: var(--muted); font-size: .85rem; background: repeating-linear-gradient(135deg, var(--surface) 0 14px, color-mix(in srgb, var(--accent) 6%, var(--surface)) 14px 28px) !important; }
 .ph b { display: block; font: 600 1rem Oswald, sans-serif; color: var(--ink); text-transform: uppercase; }
-@media (max-width: 760px) { .gallery { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 150px; } }
+@media (max-width: 760px) { .brand__logo { height: 36px; } .gallery { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 150px; } }
 
 .steps { list-style: none; padding: 0; margin: 28px 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; counter-reset: s; }
 .steps li { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 24px; display: flex; flex-direction: column; gap: 4px; }

@@ -16,7 +16,11 @@ Rev Auto (Q Concept Group Ventures DBA RevAuto, Florida motor vehicle repair reg
 - Dent and scratch repair
 - Bumper repair and replacement
 - Radio and electronics installs (car radios, screens, accessories)
+- Custom work and restoration: custom paint and color matching, widebody kits, wheels and trim, classic car restorations (e.g. a 1966 Austin-Healey, a 1969 Porsche 912)
+- Brakes, suspension and upgrades: brakes, coilovers, lighting, wings
 - Damage check and honest advice
+
+Insurance jobs, walk-ins and custom work are all welcome. The shop works on everything from everyday cars to Aston Martin, Maserati, Range Rover, Porsche and Tesla.
 
 ## Booking and estimates
 - Book online on the website (service, day, time). The shop confirms by text or call.

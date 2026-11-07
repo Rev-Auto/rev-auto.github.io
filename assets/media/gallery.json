@@ -1,0 +1,18 @@
+[
+  {"src": "range-rover-hood.mp4", "poster": "range-rover-hood-poster.jpg", "alt": "Fresh gloss black paint on a Range Rover hood", "caption": "Gloss black hood, fresh out of the booth"},
+  {"src": "range-rover-sport.jpg", "alt": "Range Rover Sport in the shop", "caption": "Range Rover Sport"},
+  {"src": "aston-martin-vantage.jpg", "alt": "Aston Martin Vantage in the shop", "caption": "Aston Martin Vantage"},
+  {"src": "civic-before.jpg", "alt": "Honda Civic with front-end collision damage", "caption": "Before: front-end collision"},
+  {"src": "civic-after.jpg", "alt": "The same Honda Civic, repaired and painted", "caption": "After: repaired & painted"},
+  {"src": "austin-healey-front.jpg", "alt": "1966 Austin-Healey in British Racing Green", "caption": "'66 Austin-Healey, British Racing Green"},
+  {"src": "austin-healey-restored.jpg", "alt": "Restored Austin-Healey", "caption": "Classic restoration"},
+  {"src": "gla-before.jpg", "alt": "Mercedes GLA with rear bumper and taillight damage", "caption": "Before: rear bumper & taillight"},
+  {"src": "gla-after.jpg", "alt": "The same Mercedes GLA, repaired", "caption": "After: like it never happened"},
+  {"src": "skyline-gtr.jpg", "alt": "Nissan Skyline GT-R", "caption": "Nissan Skyline GT-R"},
+  {"src": "jaguar-booth.jpg", "alt": "Jaguar F-Type in the paint booth", "caption": "Jaguar F-Type in the booth"},
+  {"src": "maserati-quattroporte.jpg", "alt": "Maserati Quattroporte", "caption": "Maserati Quattroporte"},
+  {"src": "bmw-135i.jpg", "alt": "Red BMW 135i", "caption": "BMW 135i"},
+  {"src": "bmw-330i-blue.jpg", "alt": "BMW 330i in Phytonic Blue", "caption": "BMW 330i, Phytonic Blue"},
+  {"src": "classic-chevy.jpg", "alt": "Classic Chevy pickup", "caption": "Classic Chevy pickup"},
+  {"src": "color-deck.jpg", "alt": "Custom paint color deck", "caption": "Any color you can imagine"}
+]
