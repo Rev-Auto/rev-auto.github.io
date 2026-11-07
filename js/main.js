@@ -98,6 +98,8 @@
     }), { threshold: 0.6 });
     track.querySelectorAll("video").forEach((v) => io.observe(v));
     const step = () => track.querySelector(".reel").offsetWidth + 14;
+    const bar = () => ($("#reelsBar").style.width = Math.min(100, ((track.scrollLeft + track.clientWidth) / track.scrollWidth) * 100) + "%");
+    track.addEventListener("scroll", bar, { passive: true }); bar();
     let idle = true, visible = false, resume;
     const touch = () => { idle = false; clearTimeout(resume); resume = setTimeout(() => (idle = true), 9000); };
     ["pointerdown", "wheel", "touchstart", "keydown", "mouseenter"].forEach((ev) => track.addEventListener(ev, touch, { passive: true }));
