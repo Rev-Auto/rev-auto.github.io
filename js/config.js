@@ -8,6 +8,7 @@ window.REV = {
   mapsUrl: "https://www.google.com/maps/search/?api=1&query=2133+19th+St+Sarasota+FL",
   mapEmbed: "https://www.google.com/maps?q=2133+19th+St,+Sarasota,+FL&output=embed",
   instagram: "https://www.instagram.com/revautosrq/",
+  owner: "Uriel", // first name used by the assistant ("Who's the owner?"); set to "" to hide
   years: "10+",
   facebook: "https://www.facebook.com/revautosrq/",
 
@@ -20,6 +21,8 @@ window.REV = {
 
   // From the shop's Google listing.
   hours: [["Monday – Friday", "8:30 AM – 5:30 PM"], ["Saturday", "10:00 AM – 3:00 PM"], ["Sunday", "Closed"]],
+  // Same hours by weekday (0 = Sunday), used by the assistant for "can I come tomorrow?"
+  openByDay: ["", "8:30 AM – 5:30 PM", "8:30 AM – 5:30 PM", "8:30 AM – 5:30 PM", "8:30 AM – 5:30 PM", "8:30 AM – 5:30 PM", "10:00 AM – 3:00 PM"],
 
   // Optional: paste a Botpress webchat script URL pair here to replace the built-in assistant.
   botpress: { inject: "", config: "" },

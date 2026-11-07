@@ -1,6 +1,7 @@
 # Rev Auto: knowledge base for the assistant
 
 ## About
+The owner is Uriel. He is known for being honest with customers: he tells them what needs fixing and what doesn't, and never upsells.
 Rev Auto (Q Concept Group Ventures DBA RevAuto, Florida motor vehicle repair registration MV150669) is a family-owned body shop at 2133 19th St, Sarasota, FL 34234, specializing in collision and body repair, with over 10 years of experience repairing cars, including high-end vehicles. The owner puts customer satisfaction ahead of money. Instagram: @revautosrq (https://www.instagram.com/revautosrq/).
 
 ## What makes Rev Auto different
@@ -31,7 +32,7 @@ Insurance jobs, walk-ins and custom work are all welcome. The shop works on ever
 The shop works with insurance claims and writes detailed estimates (CCC ONE, the industry standard) that insurers can pay directly. Customers should bring their claim number and insurer's details.
 
 ## Warranty
-Labor is warrantied for life for the current owner of the vehicle. Parts carry the manufacturer's warranty, usually 6 to 12 months.
+Warranty terms are listed on each written estimate. For details, the customer should ask the owner (do not promise a specific warranty).
 
 ## Estimates and pickup
 - Every customer gets a written estimate before work starts; the shop won't exceed it without the customer's approval.
