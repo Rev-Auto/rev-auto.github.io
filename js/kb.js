@@ -6,7 +6,7 @@ window.REV_KB = {
   difference: [
     ["Your car comes back clean", "We don't just fix the damage and hand back a dirty car. Cars leave our shop washed, at no extra charge."],
     ["We notice the little things", "Point out that extra scratch or scuff. We'll take a look, and we're honest about what's worth fixing."],
-    ["Straight talk, fair prices", "Clear written estimates, no upselling, and photos of the work when you want them."],
+    ["Straight talk, lifetime labor warranty", "Clear written estimates, no upselling, and our labor is guaranteed for as long as you own the car."],
     ["High-end care for every car", "12+ years of experience with luxury and everyday cars alike."],
   ],
 
@@ -22,7 +22,10 @@ window.REV_KB = {
 
   faq: [
     ["How do I get an estimate?", "Book an appointment online or send us photos of the damage on WhatsApp. We'll look at the car and give you a clear written estimate before any work starts."],
-    ["Do you work with insurance?", "Yes, we can work with your insurance claim. Bring your claim number and we'll help with the process. (Confirm the details with us for your insurer.)"],
+    ["Do you work with insurance?", "Yes. We write a detailed estimate your insurer can pay directly. Bring your claim number and insurance details, and we'll help with the process."],
+    ["Do you offer a warranty?", "Yes. Our labor is warrantied for life for the current owner of the car, and parts carry the manufacturer's warranty (usually 6 to 12 months)."],
+    ["Will I get a written estimate?", "Always. You get a clear written estimate before any work starts, and we won't go over it without your approval."],
+    ["When should I pick up my car?", "We'll let you know as soon as it's ready. Please pick it up within 3 days of that notice: after that, a storage fee applies."]
     ["How long will my repair take?", "It depends on the damage and parts. Small repairs can take a day or two; bigger collision work takes longer. We'll give you a time estimate with your quote."],
     ["Do you work on luxury cars?", "Yes. We've repaired high-end cars for over 12 years, and we treat every car with the same care."],
     ["Do you only do bodywork?", "Bodywork is our specialty, but we understand all things auto, including installing radios and electronics. Ask us about your car."],

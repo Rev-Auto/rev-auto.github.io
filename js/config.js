@@ -2,7 +2,9 @@
 window.REV = {
   name: "Rev Auto",
   tagline: "Collision & body repair, done right.",
-  address: "2133 19th St, Sarasota, FL",
+  legalName: "Q Concept Group Ventures DBA RevAuto",
+  address: "2133 19th St, Sarasota, FL 34234",
+  flRepairReg: "MV150669", // Florida motor vehicle repair registration (shown in the footer, as FL law asks for ads)
   mapsUrl: "https://www.google.com/maps/search/?api=1&query=2133+19th+St+Sarasota+FL",
   mapEmbed: "https://www.google.com/maps?q=2133+19th+St,+Sarasota,+FL&output=embed",
   instagram: "https://www.instagram.com/revautosrq/",
@@ -10,7 +12,7 @@ window.REV = {
 
   // Phone used for WhatsApp and Call buttons, split into pieces so it never appears on the page as text.
   // Example for (941) 555-0123: ["+1", "941", "555", "01", "23"]. Leave empty until we have it.
-  phone: [],
+  phone: ["+1", "941", "548", "77", "32"], // shop line from the estimate; WhatsApp only works if this number has WhatsApp
 
   // Free email copy of every booking request: create a key at https://web3forms.com with the shop's email.
   web3formsKey: "",
