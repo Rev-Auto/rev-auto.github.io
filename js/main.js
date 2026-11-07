@@ -60,7 +60,7 @@
   $("#addr").textContent = R.address; $("#footAddr").textContent = R.address;
   $("#hours").innerHTML = R.hours.map(([d, h]) => `<tr><td>${esc(d)}</td><td><b>${esc(h)}</b></td></tr>`).join("");
   $("#map").src = R.mapEmbed; $("#mapsLink").href = R.mapsUrl;
-  $("#igLink").href = R.instagram; $("#footIg").href = R.instagram;
+  document.querySelectorAll("[data-social]").forEach((a) => (a.href = a.dataset.social === "fb" ? R.facebook : R.instagram));
   $("#year").textContent = new Date().getFullYear();
 
   // gallery: drop photos/videos in assets/media and list them in assets/media/gallery.json
@@ -85,6 +85,7 @@
     const missing = ["name", "phone", "vehicle", "service", "date", "time"].filter((k) => !String(d[k] || "").trim());
     if (missing.length) { msg.className = "form__msg bad"; msg.textContent = "Please fill in your name, phone, vehicle, service, date and time."; form.querySelector(`[name=${missing[0]}]`).focus(); return; }
     if (new Date(d.date + "T12:00").getDay() === 0) { msg.className = "form__msg bad"; msg.textContent = "We're closed on Sundays. Please pick another day."; return; }
+    if (new Date(d.date + "T12:00").getDay() === 6 && /Afternoon/.test(d.time)) { msg.className = "form__msg bad"; msg.textContent = "On Saturdays we're open 10 AM to 3 PM. Please pick morning or midday."; return; }
     const when = new Date(d.date + "T12:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
     const summary = `New appointment request\n\nName: ${d.name}\nPhone: ${d.phone}\nEmail: ${d.email || "-"}\nVehicle: ${d.vehicle}\nService: ${d.service}${d.insurance ? " (insurance claim)" : ""}\nPreferred: ${when}, ${d.time}\n\nDetails:\n${d.details || "-"}`;
     const btn = form.querySelector("button[type=submit]"); btn.disabled = true; msg.className = "form__msg"; msg.textContent = "Sending…";

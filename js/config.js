@@ -8,17 +8,18 @@ window.REV = {
   mapsUrl: "https://www.google.com/maps/search/?api=1&query=2133+19th+St+Sarasota+FL",
   mapEmbed: "https://www.google.com/maps?q=2133+19th+St,+Sarasota,+FL&output=embed",
   instagram: "https://www.instagram.com/revautosrq/",
-  years: "12+",
+  years: "10+",
+  facebook: "https://www.facebook.com/revautosrq/",
 
   // Phone used for WhatsApp and Call buttons, split into pieces so it never appears on the page as text.
   // Example for (941) 555-0123: ["+1", "941", "555", "01", "23"]. Leave empty until we have it.
   phone: ["+1", "941", "548", "77", "32"], // shop line from the estimate; WhatsApp only works if this number has WhatsApp
 
   // Free email copy of every booking request: create a key at https://web3forms.com with the shop's email.
-  web3formsKey: "",
+  web3formsKey: "66067dfe-54fb-48a6-8984-a74f0a823a90", // sends to the shop's email (never shown on the site)
 
-  // TODO: confirm with the shop.
-  hours: [["Monday – Friday", "8:00 AM – 5:00 PM"], ["Saturday", "By appointment"], ["Sunday", "Closed"]],
+  // From the shop's Google listing.
+  hours: [["Monday – Friday", "8:30 AM – 5:30 PM"], ["Saturday", "10:00 AM – 3:00 PM"], ["Sunday", "Closed"]],
 
   // Optional: paste a Botpress webchat script URL pair here to replace the built-in assistant.
   botpress: { inject: "", config: "" },

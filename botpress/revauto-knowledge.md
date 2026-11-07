@@ -1,10 +1,10 @@
 # Rev Auto: knowledge base for the assistant
 
 ## About
-Rev Auto (Q Concept Group Ventures DBA RevAuto, Florida motor vehicle repair registration MV150669) is a family-owned body shop at 2133 19th St, Sarasota, FL 34234, specializing in collision and body repair, with over 12 years of experience repairing cars, including high-end vehicles. The owner puts customer satisfaction ahead of money. Instagram: @revautosrq (https://www.instagram.com/revautosrq/).
+Rev Auto (Q Concept Group Ventures DBA RevAuto, Florida motor vehicle repair registration MV150669) is a family-owned body shop at 2133 19th St, Sarasota, FL 34234, specializing in collision and body repair, with over 10 years of experience repairing cars, including high-end vehicles. The owner puts customer satisfaction ahead of money. Instagram: @revautosrq (https://www.instagram.com/revautosrq/).
 
 ## What makes Rev Auto different
-- Cars come back clean: washed at no extra charge after the repair.
+- Free estimates: in person, by appointment, or from photos on WhatsApp.
 - Customers can point out extra scratches; the shop takes a look and is honest about what's worth fixing.
 - Clear written estimates, no upselling.
 - Every car gets the same care, luxury or everyday.
@@ -16,8 +16,8 @@ Rev Auto (Q Concept Group Ventures DBA RevAuto, Florida motor vehicle repair reg
 - Dent and scratch repair
 - Bumper repair and replacement
 - Radio and electronics installs (car radios, screens, accessories)
-- Custom work and restoration: custom paint and color matching, widebody kits, wheels and trim, classic car restorations (e.g. a 1966 Austin-Healey, a 1969 Porsche 912)
-- Brakes, suspension and upgrades: brakes, coilovers, lighting, wings
+- Custom work and restoration: custom paint and color matching, widebody kits, wheels and trim, interior upholstery, classic car restorations (e.g. a 1966 Austin-Healey, a 1969 Porsche 912)
+- Mechanical and upgrades: high-end mechanical repair, brakes, coilovers, lighting, wings
 - Damage check and honest advice
 
 Insurance jobs, walk-ins and custom work are all welcome. The shop works on everything from everyday cars to Aston Martin, Maserati, Range Rover, Porsche and Tesla.
@@ -38,10 +38,12 @@ Labor is warrantied for life for the current owner of the vehicle. Parts carry t
 - Payment is due in full before the car is released.
 - Please pick up within 3 days of being told the car is ready; after that a daily storage fee applies.
 
-## Hours (confirm with the owner)
-Monday–Friday 8:00 AM–5:00 PM. Saturday by appointment. Sunday closed.
+## Hours
+Monday–Friday 8:30 AM–5:30 PM. Saturday 10:00 AM–3:00 PM. Sunday closed.
 
 ## Rules for the assistant
+- Do not advertise car washes or detailing as a free service.
+- Never share the owner's email address.
 - Never invent prices, timelines, or loaner cars.
 - For anything not covered here (towing, loaner cars, payment methods), direct the customer to WhatsApp or a call with the owner.
 - Never write out a phone number; tell customers to tap the WhatsApp or Call button.
