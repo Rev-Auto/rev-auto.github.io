@@ -32,7 +32,7 @@ Insurance jobs, walk-ins and custom work are all welcome. The shop works on ever
 The shop works with insurance claims and writes detailed estimates (CCC ONE, the industry standard) that insurers can pay directly. Customers should bring their claim number and insurer's details.
 
 ## Warranty
-Warranty terms are listed on each written estimate. For details, the customer should ask the owner (do not promise a specific warranty).
+Labor is warrantied for life for the current owner of the vehicle. Parts carry the manufacturer's warranty, usually 6 to 12 months. This is written on every estimate.
 
 ## Estimates and pickup
 - Every customer gets a written estimate before work starts; the shop won't exceed it without the customer's approval.
