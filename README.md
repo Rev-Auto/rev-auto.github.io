@@ -5,7 +5,8 @@ Family-owned collision & body repair, 2133 19th St, Sarasota, FL. Static site (G
 ## Edit
 - `js/config.js`: phone (for hidden WhatsApp/Call buttons), Web3Forms key (booking emails), hours, Botpress.
 - `js/kb.js`: the knowledge base: about, "difference", services, FAQ. The page and the assistant both read it.
-- Photos/videos: put files in `assets/media/` and list them in `assets/media/gallery.json`, e.g. `[{"src": "bumper-before-after.jpg", "alt": "Bumper repair"}]` (the first item shows large).
+- Instagram media: `python3 tools/import_media.py <download folder>` compresses photos/videos, makes video posters and writes `gallery.json`.
+- Photos/videos by hand: put files in `assets/media/` and list them in `assets/media/gallery.json`, e.g. `[{"src": "bumper-before-after.jpg", "alt": "Bumper repair"}]` (the first item shows large).
 - Logo: replace the "R" mark (`.brand__mark` in `index.html`) and `assets/img/favicon.svg`.
 
 ## Themes

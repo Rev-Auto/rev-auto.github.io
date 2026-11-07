@@ -71,7 +71,7 @@
       return;
     }
     g.innerHTML = items.map((m, i) => (/\.(mp4|webm|mov)$/i.test(m.src)
-      ? `<video class="${i === 0 ? "big" : ""}" src="assets/media/${m.src}" muted loop playsinline autoplay preload="metadata" aria-label="${esc(m.alt || "")}"></video>`
+      ? `<video class="${i === 0 ? "big" : ""}" src="assets/media/${m.src}"${m.poster ? ` poster="assets/media/${esc(m.poster)}"` : ""} muted loop playsinline autoplay preload="metadata" aria-label="${esc(m.alt || "")}"></video>`
       : `<img class="${i === 0 ? "big" : ""}" src="assets/media/${m.src}" alt="${esc(m.alt || "Rev Auto repair")}" loading="lazy" />`)).join("");
   });
 
