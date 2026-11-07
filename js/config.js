@@ -8,7 +8,7 @@ window.REV = {
   mapsUrl: "https://www.google.com/maps/search/?api=1&query=2133+19th+St+Sarasota+FL",
   mapEmbed: "https://www.google.com/maps?q=2133+19th+St,+Sarasota,+FL&output=embed",
   instagram: "https://www.instagram.com/revautosrq/",
-  owner: "Uriel", // first name used by the assistant ("Who's the owner?"); set to "" to hide
+  owner: "Mr. Uriel", // first name used by the assistant ("Who's the owner?"); set to "" to hide
   years: "10+",
   facebook: "https://www.facebook.com/revautosrq/",
 

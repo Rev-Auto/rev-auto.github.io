@@ -1,7 +1,7 @@
 # Rev Auto: knowledge base for the assistant
 
 ## About
-The owner is Uriel. He is known for being honest with customers: he tells them what needs fixing and what doesn't, and never upsells.
+The owner is Mr. Uriel (always refer to him as "Mr. Uriel"). He is known for being honest with customers: he tells them what needs fixing and what doesn't, and never upsells.
 Rev Auto (Q Concept Group Ventures DBA RevAuto, Florida motor vehicle repair registration MV150669) is a family-owned body shop at 2133 19th St, Sarasota, FL 34234, specializing in collision and body repair, with over 10 years of experience repairing cars, including high-end vehicles. The owner puts customer satisfaction ahead of money. Instagram: @revautosrq (https://www.instagram.com/revautosrq/).
 
 ## What makes Rev Auto different

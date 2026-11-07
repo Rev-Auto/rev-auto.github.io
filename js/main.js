@@ -73,6 +73,14 @@
     g.innerHTML = items.map((m, i) => `<figure class="${i === 0 ? "big" : ""}">${/\.(mp4|webm|mov)$/i.test(m.src)
       ? `<video src="assets/media/${m.src}"${m.poster ? ` poster="assets/media/${esc(m.poster)}"` : ""} muted loop playsinline autoplay preload="metadata" aria-label="${esc(m.alt || "")}"></video>`
       : `<img src="assets/media/${m.src}" alt="${esc(m.alt || "Rev Auto repair")}" loading="lazy" />`}${m.caption ? `<figcaption>${esc(m.caption)}</figcaption>` : ""}</figure>`).join("");
+    // no holes: stretch the last tile across whatever the final row leaves empty (any column count)
+    const fill = () => {
+      const last = g.lastElementChild, cols = getComputedStyle(g).gridTemplateColumns.split(" ").length;
+      last.classList.remove("span2", "span3");
+      const used = items.length - 1 + 4, left = (cols - (used % cols)) % cols; // big tile = 2x2 = 4 cells
+      if (left) last.classList.add(`span${Math.min(3, left + 1)}`);
+    };
+    fill(); addEventListener("resize", fill);
   });
 
   // ---------- booking request -> email (Web3Forms), with WhatsApp as a backup
