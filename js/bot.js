@@ -67,9 +67,9 @@
 
   // ---------- widget
   const root = $("#assistant");
-  root.innerHTML = `<button class="chat-fab" id="chatFab" type="button"><span class="brand__mark">R</span>Questions? Ask us</button>
+  root.innerHTML = `<button class="chat-fab" id="chatFab" type="button"><img class="chat-ava" src="assets/img/mr-uriel-96.png" alt="" />Questions? Ask us</button>
     <section class="chat" id="chat" hidden role="dialog" aria-label="Rev Auto assistant">
-      <header class="chat__head"><span class="brand__mark">R</span><div><b>Rev Auto assistant</b><small>Quick answers · owner on WhatsApp</small></div><button class="chat__x" id="chatX" aria-label="Close">×</button></header>
+      <header class="chat__head"><img class="chat-ava" src="assets/img/mr-uriel-96.png" alt="" /><div><b>Rev Auto assistant</b><small>Quick answers · owner on WhatsApp</small></div><button class="chat__x" id="chatX" aria-label="Close">×</button></header>
       <div class="chat__log" id="chatLog" aria-live="polite"></div><div class="chat__chips" id="chatChips"></div>
       <form class="chat__form" id="chatForm"><input id="chatIn" autocomplete="off" placeholder="Ask about repairs, estimates, hours…" aria-label="Message" /><button class="btn btn--accent btn--sm">Send</button></form>
     </section>`;

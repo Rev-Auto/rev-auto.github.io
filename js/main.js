@@ -15,6 +15,12 @@
   }
   document.querySelectorAll(".theme button").forEach((b) => (b.onclick = () => setTheme(b.dataset.set)));
   setTheme(document.documentElement.dataset.choice || "auto");
+  const panel = $("#themePanel"), toggle = $("#themeToggle");
+  const showPanel = (on) => { panel.hidden = !on; toggle.setAttribute("aria-expanded", on); };
+  toggle.onclick = (e) => { e.stopPropagation(); showPanel(panel.hidden); };
+  panel.addEventListener("click", (e) => { if (e.target.closest("button")) setTimeout(() => showPanel(false), 250); });
+  document.addEventListener("click", (e) => { if (!panel.hidden && !e.target.closest("#themeDock")) showPanel(false); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") showPanel(false); });
   setInterval(() => { if (document.documentElement.dataset.choice === "auto") setTheme("auto"); }, 600000);
 
   // ---------- contact without showing the number
@@ -81,6 +87,27 @@
       if (left) last.classList.add(`span${Math.min(3, left + 1)}`);
     };
     fill(); addEventListener("resize", fill);
+  });
+
+  // reels: clips load and play only while on screen; the strip drifts along by itself until someone touches it
+  fetch("assets/media/reels.json").then((r) => (r.ok ? r.json() : [])).catch(() => []).then((reels) => {
+    const track = $("#reels"); if (!reels.length) return track.closest(".reels").remove();
+    track.innerHTML = reels.map((m) => `<figure class="reel"><div class="reel__bg" style="background-image:url('assets/media/reels/${m.src}.jpg')"></div><video muted loop playsinline preload="none" poster="assets/media/reels/${m.src}.jpg" data-src="assets/media/reels/${m.src}.mp4" aria-label="${esc(m.caption)}"></video><figcaption>${esc(m.caption)}</figcaption></figure>`).join("");
+    const io = new IntersectionObserver((es) => es.forEach(({ target: v, isIntersecting }) => {
+      if (isIntersecting) { if (!v.src) v.src = v.dataset.src; v.play().catch(() => {}); } else v.pause();
+    }), { threshold: 0.6 });
+    track.querySelectorAll("video").forEach((v) => io.observe(v));
+    const step = () => track.querySelector(".reel").offsetWidth + 14;
+    let idle = true, visible = false, resume;
+    const touch = () => { idle = false; clearTimeout(resume); resume = setTimeout(() => (idle = true), 9000); };
+    ["pointerdown", "wheel", "touchstart", "keydown", "mouseenter"].forEach((ev) => track.addEventListener(ev, touch, { passive: true }));
+    new IntersectionObserver(([e]) => (visible = e.isIntersecting), { threshold: 0.3 }).observe(track);
+    document.querySelectorAll(".reels__nav button").forEach((b) => (b.onclick = () => { touch(); track.scrollBy({ left: step() * 2 * b.dataset.dir }); }));
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) setInterval(() => {
+      if (!idle || !visible || document.hidden) return;
+      const end = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
+      track.scrollTo({ left: end ? 0 : track.scrollLeft + step() });
+    }, 3500);
   });
 
   // ---------- booking request -> email (Web3Forms), with WhatsApp as a backup

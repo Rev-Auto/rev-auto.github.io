@@ -16,7 +16,7 @@
   <link rel="canonical" href="https://ftalla18.github.io/revauto/" />
   <script type="application/ld+json">
   {"@context": "https://schema.org", "@type": "AutoBodyShop", "name": "RevAuto", "legalName": "Q Concept Group Ventures DBA RevAuto",
-    "url": "https://ftalla18.github.io/revauto/", "image": "https://ftalla18.github.io/revauto/assets/img/og-revauto.png", "logo": "https://ftalla18.github.io/revauto/assets/img/logo-light.png",
+    "url": "https://ftalla18.github.io/revauto/", "image": "https://ftalla18.github.io/revauto/assets/img/og-revauto.png", "logo": "https://ftalla18.github.io/revauto/assets/img/logo-lux-light.png",
     "address": {"@type": "PostalAddress", "streetAddress": "2133 19th St", "addressLocality": "Sarasota", "addressRegion": "FL", "postalCode": "34234", "addressCountry": "US"},
     "openingHoursSpecification": [
       {"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "08:30", "closes": "17:30"},
@@ -43,16 +43,10 @@
 
   <header class="top">
     <div class="wrap top__in">
-      <a class="brand" href="#top" aria-label="Rev Auto home"><img class="brand__logo brand__logo--light" src="assets/img/logo-light.png" alt="Rev Auto" width="884" height="258" /><img class="brand__logo brand__logo--dark" src="assets/img/logo-dark.png" alt="Rev Auto" width="884" height="258" /></a>
+      <a class="brand" href="#top" aria-label="Rev Auto home"><img class="brand__logo brand__logo--light" src="assets/img/logo-lux-light-word.png" alt="Rev Auto · Lux Paint & Repair" width="436" height="211" /><img class="brand__logo brand__logo--dark" src="assets/img/logo-lux-dark-word.png" alt="Rev Auto · Lux Paint & Repair" width="436" height="211" /></a>
       <nav class="nav" id="nav">
         <a href="#services">Services</a><a href="#difference">Why us</a><a href="#work">Our work</a><a href="#faq">FAQ</a><a href="#visit">Visit</a>
       </nav>
-      <div class="theme" role="group" aria-label="Color theme">
-        <button type="button" data-set="auto" title="Matches the time of day">Auto</button>
-        <button type="button" data-set="showroom" title="Showroom: white, blue and orange" aria-label="Showroom theme"><i class="sw sw--showroom"></i></button>
-        <button type="button" data-set="garage" title="Garage: blue and orange" aria-label="Garage theme"><i class="sw sw--garage"></i></button>
-        <button type="button" data-set="midnight" title="Midnight: black and gold" aria-label="Midnight theme"><i class="sw sw--midnight"></i></button>
-      </div>
       <div class="social social--top"><a data-social="ig" target="_blank" rel="noopener" aria-label="RevAuto on Instagram" title="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a><a data-social="fb" target="_blank" rel="noopener" aria-label="RevAuto on Facebook" title="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7.5h2.5l.4-3h-2.9V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H8v3h2.5V21z"/></svg></a></div>
       <a class="btn btn--accent btn--sm top__cta" href="#book">Book</a>
     </div>
@@ -62,6 +56,7 @@
     <section class="hero">
       <div class="hero__media" aria-hidden="true"><img src="assets/media/range-rover-sport.jpg" alt="" /></div>
       <div class="wrap hero__in">
+        <div class="hero__logo"><img class="hero__img hero__img--light" src="assets/img/logo-lux-light.png" alt="Rev Auto · Lux Paint & Repair" width="499" height="359" /><img class="hero__img hero__img--dark" src="assets/img/logo-lux-dark.png" alt="Rev Auto · Lux Paint & Repair" width="499" height="359" /></div>
         <p class="eyebrow">Family&#8209;owned · Sarasota,&nbsp;FL · Insurance · Walk&#8209;ins · Custom&nbsp;work</p>
         <h1>We fix what you came for,<br /><span class="accent">and send it back better.</span></h1>
         <p class="lead">Collision repair, bodywork, paint and custom work from a shop that puts you before the bill. Honest estimates, honest work, and the same commitment to doing it right.</p>
@@ -77,6 +72,15 @@
       <div class="wrap">
         <p class="kicker">The Rev Auto difference</p>
         <h2>Most shops fix the damage. We take care of the car.</h2>
+        <div class="meet">
+          <img src="assets/img/mr-uriel.png" alt="Mr. Uriel's cartoon persona" width="360" height="360" loading="lazy" />
+          <div>
+            <p class="kicker">Meet the owner</p>
+            <h3>Mr. Uriel</h3>
+            <p>10+ years repairing everything from a '69 Porsche 912 to a Ram TRX. Known for honest advice, fair estimates, and treating every car like his own. That's his cartoon twin in our videos.</p>
+            <a class="btn btn--ghost btn--sm" data-social="ig" target="_blank" rel="noopener">See his work on Instagram ↗</a>
+          </div>
+        </div>
         <div class="grid grid--4" id="diffGrid"></div>
       </div>
     </section>
@@ -94,6 +98,13 @@
         <p class="kicker">Our work</p>
         <h2>Before, after, and everything in between.</h2>
         <div class="gallery" id="gallery"></div>
+        <div class="reels">
+          <div class="reels__head">
+            <div><p class="kicker">From the shop floor</p><h3>Watch the work happen</h3></div>
+            <div class="reels__nav"><button type="button" data-dir="-1" aria-label="Previous videos">‹</button><button type="button" data-dir="1" aria-label="Next videos">›</button></div>
+          </div>
+          <div class="reels__track" id="reels" tabindex="0" aria-label="Short videos from the shop"></div>
+        </div>
         <p class="center social-ctas"><a class="btn btn--ghost" data-social="ig" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg> Follow @revautosrq on Instagram</a><a class="btn btn--ghost" data-social="fb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7.5h2.5l.4-3h-2.9V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H8v3h2.5V21z"/></svg> Facebook</a></p>
       </div>
     </section>
@@ -160,7 +171,7 @@
 
   <footer class="foot">
     <div class="wrap foot__in">
-      <a class="brand brand--foot" href="#top"><img class="brand__logo brand__logo--light" src="assets/img/logo-light.png" alt="Rev Auto" width="884" height="258" /><img class="brand__logo brand__logo--dark" src="assets/img/logo-dark.png" alt="Rev Auto" width="884" height="258" /></a>
+      <a class="brand brand--foot" href="#top"><img class="brand__logo brand__logo--light" src="assets/img/logo-lux-light.png" alt="Rev Auto · Lux Paint & Repair" width="499" height="359" /><img class="brand__logo brand__logo--dark" src="assets/img/logo-lux-dark.png" alt="Rev Auto · Lux Paint & Repair" width="499" height="359" /></a>
       <p class="muted small">Family-owned collision & body repair · <span id="footAddr"></span></p>
       <div class="social"><a data-social="ig" target="_blank" rel="noopener" aria-label="RevAuto on Instagram" title="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a><a data-social="fb" target="_blank" rel="noopener" aria-label="RevAuto on Facebook" title="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7.5h2.5l.4-3h-2.9V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H8v3h2.5V21z"/></svg></a></div>
       <p class="muted small">Q Concept Group Ventures DBA RevAuto · FL Motor Vehicle Repair Reg. MV150669</p>
@@ -168,6 +179,16 @@
     </div>
   </footer>
 
+  <div class="theme-dock" id="themeDock">
+    <div class="theme" id="themePanel" role="group" aria-label="Color theme" hidden>
+      <b>Color theme</b>
+      <button type="button" data-set="auto"><i class="sw sw--auto"></i>Auto <small>follows the time of day</small></button>
+      <button type="button" data-set="showroom"><i class="sw sw--showroom"></i>Showroom</button>
+      <button type="button" data-set="garage"><i class="sw sw--garage"></i>Garage</button>
+      <button type="button" data-set="midnight"><i class="sw sw--midnight"></i>Midnight</button>
+    </div>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Change color theme" aria-expanded="false" aria-controls="themePanel" title="Color theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.7-.8 1.7-1.6 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.6 1.7-1.6H16a5 5 0 0 0 5-5c0-4-4-7.4-9-7.4z"/><circle cx="7.5" cy="11" r="1.2" fill="currentColor"/><circle cx="10" cy="7" r="1.2" fill="currentColor"/><circle cx="15" cy="7.5" r="1.2" fill="currentColor"/></svg></button>
+  </div>
   <div id="assistant"></div>
   <div class="toast" id="toast" role="status"></div>
 
