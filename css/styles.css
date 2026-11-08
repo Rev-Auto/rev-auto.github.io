@@ -33,9 +33,10 @@ img { max-width: 100%; }
 .bg i:nth-child(1) { background: var(--glow1); left: -20vmax; top: -25vmax; animation: d1 24s ease-in-out infinite alternate; }
 .bg i:nth-child(2) { background: var(--glow2); right: -25vmax; top: 20vh; animation: d2 30s ease-in-out infinite alternate; }
 .bg i:nth-child(3) { background: var(--glow1); left: 30vw; bottom: -40vmax; opacity: .6; animation: d1 36s ease-in-out infinite alternate-reverse; }
-.bg::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(115deg, transparent 0 120px, color-mix(in srgb, var(--accent) 5%, transparent) 120px 122px); }
+.bg::after { content: ""; position: absolute; inset: -300px; background: repeating-linear-gradient(115deg, transparent 0 120px, color-mix(in srgb, var(--accent) 6%, transparent) 120px 122px); animation: streak 14s linear infinite; }
+@keyframes streak { to { transform: translate(269.3px, 0); } }
 @keyframes d1 { to { transform: translate(14vw, 10vh) scale(1.1); } } @keyframes d2 { to { transform: translate(-12vw, 14vh) scale(.9); } }
-@media (prefers-reduced-motion: reduce) { .bg i { animation: none; } html { scroll-behavior: auto; } }
+@media (prefers-reduced-motion: reduce) { .bg i, .bg::after { animation: none; } html { scroll-behavior: auto; } }
 
 /* header */
 .top { position: sticky; top: 0; z-index: 20; background: var(--head-bg); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
