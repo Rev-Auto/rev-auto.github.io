@@ -32,19 +32,19 @@
   }
   function showLock(m) {
     const lock = $("#lock"); lock.classList.remove("ok", "leaving");
-    $("#app").hidden = true; lock.hidden = false; $("#lockMsg").textContent = m || ""; $("#key").focus();
+    $("#app").hidden = true; lock.hidden = false; lock.style.display = ""; $("#lockMsg").textContent = m || ""; $("#key").focus();
   }
   // after a correct passcode: gold check + "Unlocked", the lock fades away, the dashboard slides in at the top
   function showApp() {
     const lock = $("#lock"), app = $("#app");
     $("#demoNote").hidden = !demo;
-    if (lock.hidden) { app.hidden = false; return; }
+    if (lock.hidden) { app.hidden = false; lock.style.display = "none"; return; }
     const quick = demo || matchMedia("(prefers-reduced-motion: reduce)").matches;
     lock.classList.add("ok");
     setTimeout(() => {
       lock.classList.add("leaving");
       setTimeout(() => {
-        lock.hidden = true; lock.classList.remove("ok", "leaving");
+        lock.hidden = true; lock.style.display = "none"; lock.classList.remove("ok", "leaving");
         app.hidden = false; app.classList.add("entering"); scrollTo(0, 0);
         setTimeout(() => app.classList.remove("entering"), 600);
         if (lastDaily) renderLine(lastDaily);                            // the chart could not measure its width while hidden
