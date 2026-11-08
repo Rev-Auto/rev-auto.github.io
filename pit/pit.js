@@ -1,6 +1,7 @@
 // Rev Auto shop dashboard: reads the Google Sheet through the Apps Script web app (passcode required).
 // Open with ?demo to preview it with sample data.
 (function () {
+  if (window.top !== window.self) { document.documentElement.innerHTML = ""; return; }   // never run inside someone else's frame
   const R = window.REV, $ = (s) => document.querySelector(s);
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const toast = (m) => { const t = $("#toast"); t.textContent = m; t.classList.add("show"); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 2600); };

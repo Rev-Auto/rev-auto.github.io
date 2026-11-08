@@ -33,5 +33,6 @@
     },
   };
 
-  try { if (!sessionStorage.getItem("rev.seen")) { sessionStorage.setItem("rev.seen", "1"); RevTrack.event("visit"); } } catch { RevTrack.event("visit"); }
+  // only mark the visit as counted once it was really sent (not while unconnected or on a signed-in device)
+  if (url && !skip) { try { if (!sessionStorage.getItem("rev.seen")) { sessionStorage.setItem("rev.seen", "1"); RevTrack.event("visit"); } } catch { RevTrack.event("visit"); } }
 })();

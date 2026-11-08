@@ -59,6 +59,7 @@ function saveBooking(d) {
   const name = clean(d.name, 80), phone = clean(d.phone, 30), vehicle = clean(d.vehicle, 80);
   if (!name || !phone || !vehicle) return { ok: false, error: "missing" };
   if (!allow("book:" + (clean(d.visitor, 20) || phone), 5, 3600)) return { ok: false, error: "slow down" };
+  if (!allow("book:all", 60, 3600)) return { ok: false, error: "slow down" };   // site-wide cap: a spammer can fake visitor IDs
   const tz = Session.getScriptTimeZone(), now = new Date();
   const ref = "RA-" + Utilities.formatDate(now, tz, "MMdd") + "-" + Math.random().toString(36).slice(2, 6).toUpperCase();
   const row = [ref, now, name, phone, clean(d.email, 120), vehicle, clean(d.service, 60), d.insurance ? "Yes" : "No",
@@ -72,6 +73,7 @@ function saveEvent(d) {
   const type = String(d.type || "");
   if (EVENT_TYPES.indexOf(type) < 0) return { ok: false };
   if (!allow("ev:" + (clean(d.visitor, 20) || "anon"), 80, 600)) return { ok: false, error: "slow down" };
+  if (!allow("ev:all", 2000, 3600)) return { ok: false, error: "slow down" };   // site-wide cap keeps the Sheet from being flooded
   const row = [new Date(), type, clean(d.detail, 300), clean(d.visitor, 20), clean(d.session, 20), clean(d.source, 30) || "direct",
     clean(d.ref, 80), clean(d.device, 10), clean(d.page, 60)];
   withLock(() => sheet("Events").appendRow(row.map(safeCell)));
