@@ -26,7 +26,7 @@ window.REV = {
 
   // Google Sheet backend (apps-script/Code.gs, deployed as a web app): bookings + anonymous visit stats for the
   // private dashboard. Leave "" to switch both off. Setup: apps-script/SETUP.md
-  sheetsUrl: "",
+  sheetsUrl: "https://script.google.com/macros/s/AKfycbzA6go1beM5iiAo4QVOFUL4R1s5B6GXNGEI-3wlg-XAgNc-KrYPjmwZiET32PAb3jbp/exec",
 
   // Optional: paste a Botpress webchat script URL pair here to replace the built-in assistant.
   botpress: { inject: "", config: "" },
