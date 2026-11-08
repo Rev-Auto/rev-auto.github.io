@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow, noarchive" />
+  <meta name="referrer" content="no-referrer" />
+  <title>Rev Auto</title>
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="pit.css" />
+</head>
+<body>
+  <!-- lock screen -->
+  <main class="lock" id="lock">
+    <form class="lock__card" id="lockForm" autocomplete="on">
+      <img class="lock__logo" src="../assets/img/logo-lux-dark.png" alt="Rev Auto" width="499" height="359" />
+      <label class="lock__label" for="key">Passcode</label>
+      <input id="key" name="password" type="password" autocomplete="current-password" required minlength="8" />
+      <label class="lock__remember"><input type="checkbox" id="remember" checked /> Remember this device</label>
+      <button type="submit" class="btn btn--gold" id="unlock">Unlock</button>
+      <p class="lock__msg" id="lockMsg" role="alert"></p>
+    </form>
+  </main>
+
+  <!-- dashboard -->
+  <div class="app" id="app" hidden>
+    <header class="bar">
+      <div class="bar__brand"><picture><source srcset="../assets/img/logo-lux-light-word.png" media="(prefers-color-scheme: light)" /><img src="../assets/img/logo-lux-dark-word.png" alt="Rev Auto" width="436" height="211" /></picture><span>Shop dashboard</span></div>
+      <div class="bar__tools">
+        <div class="seg" role="group" aria-label="Date range" id="range">
+          <button type="button" data-days="7">7 days</button><button type="button" data-days="30">30 days</button><button type="button" data-days="90">90 days</button><button type="button" data-days="365">1 year</button>
+        </div>
+        <button type="button" class="btn btn--ghost" id="refresh" title="Refresh">↻ Refresh</button>
+        <a class="btn btn--ghost" id="sheetLink" target="_blank" rel="noopener">Open Sheet ↗</a>
+        <button type="button" class="btn btn--ghost" id="signOut">Sign out</button>
+      </div>
+    </header>
+    <p class="demo" id="demoNote" hidden>Sample data: this is a preview. Real bookings and visits show up once the Google Sheet is connected.</p>
+
+    <section class="tiles" id="tiles" aria-label="Key numbers"></section>
+
+    <section class="panel" id="appointments">
+      <div class="panel__head">
+        <h2>Appointment requests</h2>
+        <div class="panel__tools">
+          <div class="seg" role="group" aria-label="Show" id="apptFilter">
+            <button type="button" data-f="new">Needs confirmation</button><button type="button" data-f="upcoming">Upcoming</button><button type="button" data-f="all">All</button>
+          </div>
+          <input type="search" id="apptSearch" placeholder="Search name, car, phone…" aria-label="Search requests" />
+        </div>
+      </div>
+      <div class="appts" id="appts"></div>
+    </section>
+
+    <section class="charts">
+      <article class="panel chart chart--wide">
+        <h2>Visitors per day</h2>
+        <p class="sub" id="visitorsSub"></p>
+        <div class="line" id="lineChart"></div>
+        <details class="tableview"><summary>Show as table</summary><div id="lineTable"></div></details>
+      </article>
+      <article class="panel chart"><h2>Where visitors come from</h2><p class="sub">Share of visits</p><div id="sources"></div></article>
+      <article class="panel chart"><h2>Requests by service</h2><p class="sub" id="svcSub"></p><div id="services"></div></article>
+      <article class="panel chart"><h2>Devices</h2><p class="sub">Share of visits</p><div id="devices"></div></article>
+      <article class="panel chart"><h2>Taps</h2><p class="sub">How visitors reached out</p><div id="taps"></div></article>
+    </section>
+
+    <section class="panel" id="chat">
+      <div class="panel__head">
+        <h2>What people ask the chatbot</h2>
+        <label class="check"><input type="checkbox" id="onlyMissed" /> Only questions it couldn't answer</label>
+      </div>
+      <ul class="qs" id="qs"></ul>
+    </section>
+
+    <footer class="foot">Everything here lives in your Google Sheet. This device is left out of visitor counts.</footer>
+  </div>
+
+  <div class="tip" id="tip" role="tooltip" hidden></div>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="../js/config.js"></script>
+  <script src="pit.js"></script>
+</body>
+</html>

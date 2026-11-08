@@ -17,3 +17,9 @@ Auto (default) follows the time of day: Showroom (white/blue/orange) 7am–5pm, 
 
 ## Assistant
 Built-in (`js/bot.js`), answers from `kb.js`; unknown questions go to WhatsApp with the question pre-filled. To use Botpress instead, upload `botpress/revauto-knowledge.md` as a knowledge source and paste the two webchat script URLs into `config.js`.
+
+## Bookings database + private dashboard
+- Booking requests go to Mr. Uriel's email (Web3Forms) **and** a Google Sheet at the same time; the customer sees a confirmation card with a reference number and an "Add to my calendar" file.
+- `apps-script/Code.gs` runs inside that Google Sheet (setup: `apps-script/SETUP.md`). Its URL goes in `js/config.js` as `sheetsUrl`; leave it empty to switch the Sheet and stats off.
+- `js/track.js`: anonymous, cookie-free stats (visits, source incl. `?src=qr`, device, WhatsApp/Call taps, chatbot questions).
+- Dashboard: `pit/` (not linked; noindex). Five quick taps on the footer's © line open it. Passcode = `ADMIN_KEY` in the script's properties. `pit/?demo` previews it with sample data.

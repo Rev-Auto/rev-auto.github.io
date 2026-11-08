@@ -24,6 +24,10 @@ window.REV = {
   // Same hours by weekday (0 = Sunday), used by the assistant for "can I come tomorrow?"
   openByDay: ["", "8:30 AM – 5:30 PM", "8:30 AM – 5:30 PM", "8:30 AM – 5:30 PM", "8:30 AM – 5:30 PM", "8:30 AM – 5:30 PM", "10:00 AM – 3:00 PM"],
 
+  // Google Sheet backend (apps-script/Code.gs, deployed as a web app): bookings + anonymous visit stats for the
+  // private dashboard. Leave "" to switch both off. Setup: apps-script/SETUP.md
+  sheetsUrl: "",
+
   // Optional: paste a Botpress webchat script URL pair here to replace the built-in assistant.
   botpress: { inject: "", config: "" },
 };

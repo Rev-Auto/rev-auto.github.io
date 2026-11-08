@@ -31,9 +31,10 @@
     whatsapp(body) {
       if (!this.ready()) return toast("WhatsApp is coming soon. Use the booking form for now.");
       const text = body || (this.lastQuestion ? `Hi Rev Auto, I'm reaching out from your website.\n\n${this.lastQuestion}` : "Hi Rev Auto, I'm reaching out from your website.");
+      RevTrack.event("wa", this.lastQuestion ? "from chat" : "");
       window.open(`https://wa.me/${num().replace("+", "")}?text=${encodeURIComponent(text)}`, "_blank", "noopener");
     },
-    call() { if (!this.ready()) return toast("Phone number coming soon. Use the booking form for now."); location.href = "tel:" + num(); },
+    call() { if (!this.ready()) return toast("Phone number coming soon. Use the booking form for now."); RevTrack.event("call"); location.href = "tel:" + num(); },
   };
   document.addEventListener("click", (e) => {
     const el = e.target.closest('[data-contact], a[href="#wa"], a[href="#call"]'); if (!el) return;
@@ -68,6 +69,16 @@
   $("#map").src = R.mapEmbed; $("#mapsLink").href = R.mapsUrl;
   document.querySelectorAll("[data-social]").forEach((a) => (a.href = a.dataset.social === "fb" ? R.facebook : R.instagram));
   $("#year").textContent = new Date().getFullYear();
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest("[data-social], #mapsLink"); if (!a) return;
+    RevTrack.event(a.id === "mapsLink" ? "directions" : a.dataset.social);
+  });
+  // the shop's private dashboard: five quick taps on the footer's © line (nothing on the page points to it)
+  let taps = [];
+  $("#copyLine").addEventListener("click", () => {
+    const now = Date.now(); taps = taps.filter((t) => now - t < 2500).concat(now);
+    if (taps.length >= 5) location.href = "pit/";
+  });
 
   // gallery: drop photos/videos in assets/media and list them in assets/media/gallery.json
   fetch("assets/media/gallery.json").then((r) => (r.ok ? r.json() : [])).catch(() => []).then((items) => {
@@ -112,9 +123,45 @@
     }, 3500);
   });
 
-  // ---------- booking request -> email (Web3Forms), with WhatsApp as a backup
-  const form = $("#bookForm"), msg = $("#bookMsg");
+  // ---------- booking request -> Google Sheet + email (Web3Forms) at the same time; WhatsApp if both fail
+  const form = $("#bookForm"), msg = $("#bookMsg"), done = $("#bookDone");
   form.date.min = new Date().toISOString().slice(0, 10);
+  const SLOT_START = { Morning: "0830", Midday: "1100", Afternoon: "1400" };
+
+  // a calendar file for the requested time (marked "requested" until the shop confirms)
+  function icsFor(d) {
+    const day = d.date.replace(/-/g, ""), sat = new Date(d.date + "T12:00").getDay() === 6;
+    let hm = SLOT_START[(d.time.match(/^\w+/) || ["Morning"])[0]] || "0900"; if (sat && hm === "0830") hm = "1000";
+    const end = String(Number(hm.slice(0, 2)) + 1).padStart(2, "0") + hm.slice(2);
+    const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Rev Auto//Booking//EN", "BEGIN:VEVENT",
+      `UID:${Date.now()}@revauto`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").slice(0, 15)}Z`,
+      `DTSTART:${day}T${hm}00`, `DTEND:${day}T${end}00`, `SUMMARY:Rev Auto: ${d.service} (requested)`,
+      `LOCATION:${R.address.replace(/,/g, "\\,")}`, `DESCRIPTION:Requested ${d.time}. Rev Auto will text or call to confirm.`, "END:VEVENT", "END:VCALENDAR"];
+    return URL.createObjectURL(new Blob([lines.join("\r\n")], { type: "text/calendar" }));
+  }
+
+  function showDone(d, when, ref) {
+    const first = d.name.trim().split(/\s+/)[0];
+    done.innerHTML = `<div class="done__check" aria-hidden="true">✓</div>
+      <h3>Request sent!</h3>
+      <p>Thanks, ${esc(first)}. ${esc(R.owner || "We")} will text or call you to confirm your time.</p>
+      <dl class="done__list">
+        <div><dt>When</dt><dd>${esc(when)} · ${esc(d.time)}</dd></div>
+        <div><dt>Vehicle</dt><dd>${esc(d.vehicle)}</dd></div>
+        <div><dt>Service</dt><dd>${esc(d.service)}${d.insurance ? " · insurance claim" : ""}</dd></div>
+        ${ref ? `<div><dt>Reference</dt><dd><b>${esc(ref)}</b></dd></div>` : ""}
+      </dl>
+      <div class="done__btns">
+        <a class="btn btn--accent" download="rev-auto-appointment.ics" href="${icsFor(d)}">📅 Add to my calendar</a>
+        ${RevContact.ready() ? `<a class="btn btn--wa" href="#wa" data-body="Hi Rev Auto, I just booked online${ref ? ` (ref ${esc(ref)})` : ""}. Here are photos of the damage:">💬 Send damage photos</a>` : ""}
+        <button class="btn btn--ghost" type="button" id="bookAgain">Book another car</button>
+      </div>
+      <p class="muted small">This is a request: your time is confirmed once we reach out.</p>`;
+    form.hidden = true; done.hidden = false; done.focus();
+    done.scrollIntoView({ behavior: "smooth", block: "center" });
+    $("#bookAgain").onclick = () => { done.hidden = true; form.hidden = false; form.reset(); msg.textContent = ""; form.name.focus(); };
+  }
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const d = Object.fromEntries(new FormData(form));
@@ -126,17 +173,23 @@
     const when = new Date(d.date + "T12:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
     const summary = `New appointment request\n\nName: ${d.name}\nPhone: ${d.phone}\nEmail: ${d.email || "-"}\nVehicle: ${d.vehicle}\nService: ${d.service}${d.insurance ? " (insurance claim)" : ""}\nPreferred: ${when}, ${d.time}\n\nDetails:\n${d.details || "-"}`;
     const btn = form.querySelector("button[type=submit]"); btn.disabled = true; msg.className = "form__msg"; msg.textContent = "Sending…";
-    try {
+
+    const toSheet = RevTrack.booking({ name: d.name, phone: d.phone, email: d.email, vehicle: d.vehicle, service: d.service, insurance: !!d.insurance, date: d.date, time: d.time, details: d.details });
+    const toEmail = (async () => {
       if (!R.web3formsKey) throw new Error("not set up");
       const f = new FormData();
       Object.entries({ access_key: R.web3formsKey, subject: `Appointment request: ${d.name} · ${d.vehicle} · ${when}`, from_name: "Rev Auto website", replyto: d.email || "", message: summary, botcheck: "" }).forEach(([k, v]) => f.append(k, v));
       const r = await fetch("https://api.web3forms.com/submit", { method: "POST", body: f, headers: { Accept: "application/json" } });
       const j = await r.json(); if (!j.success) throw new Error(j.message || "failed");
-      msg.className = "form__msg ok"; msg.innerHTML = `Request sent! ✅ We'll confirm your appointment for <b>${esc(when)}</b> by text or call.${RevContact.ready() ? ' Want to send photos of the damage? <a href="#wa" data-body="">Send them on WhatsApp</a>.' : ""}`;
-      form.reset();
-    } catch {
-      if (RevContact.ready()) { msg.className = "form__msg ok"; msg.textContent = "Opening WhatsApp with your request. Just tap send."; RevContact.whatsapp(summary.replace("New appointment request", "Hi Rev Auto, I'd like to book an appointment:")); }
-      else { msg.className = "form__msg bad"; msg.textContent = "Online booking is being set up. Please check back soon."; }
-    } finally { btn.disabled = false; }
+    })();
+    const [sheet, mail] = await Promise.allSettled([toSheet, toEmail]);
+    btn.disabled = false;
+    if (sheet.status === "fulfilled" || mail.status === "fulfilled") {
+      msg.textContent = ""; RevTrack.event("book", d.service);
+      showDone(d, when, sheet.status === "fulfilled" ? sheet.value : "");
+    } else if (RevContact.ready()) {
+      msg.className = "form__msg ok"; msg.textContent = "Opening WhatsApp with your request. Just tap send.";
+      RevContact.whatsapp(summary.replace("New appointment request", "Hi Rev Auto, I'd like to book an appointment:"));
+    } else { msg.className = "form__msg bad"; msg.textContent = "Online booking is being set up. Please check back soon."; }
   });
 })();

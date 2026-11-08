@@ -61,7 +61,7 @@
     if (svc) return { html: `<b>${esc(svc.name)}</b>: yes, we do that. ${esc(svc.short)}${svc.id === "audio" ? " Bodywork is our specialty, but installs like this are part of our all-around auto know-how." : ""}<p>Send photos or book a time and we'll give you a clear estimate.</p>${BOOK}`, chips: ["How much will it cost?", "How long does it take?"] };
     const faq = K.faq.find(([q]) => { const w = q.toLowerCase().split(/\W+/).filter((x) => x.length > 4); return w.filter((x) => t.includes(x)).length >= 2; });
     if (faq) return { html: esc(faq[1]) };
-    return { html: `Good question. I'd rather not guess, so let's get you a real answer from the owner. Tap WhatsApp: your question is already in the message.${CONTACT}`, chips: ["What services do you offer?", "Book an appointment"] };
+    return { html: `Good question. I'd rather not guess, so let's get you a real answer from the owner. Tap WhatsApp: your question is already in the message.${CONTACT}`, chips: ["What services do you offer?", "Book an appointment"], miss: true };
   }
   window.RevBot = { reply };
 
@@ -76,11 +76,12 @@
   const log = $("#chatLog"), chips = (l) => ($("#chatChips").innerHTML = (l || []).map((x) => `<button type="button">${esc(x)}</button>`).join(""));
   const add = (who, html) => { const d = document.createElement("div"); d.className = `msg msg--${who}`; d.innerHTML = html; log.appendChild(d); log.scrollTop = log.scrollHeight; return d; };
   let started = false;
-  const open = () => { $("#chat").hidden = false; $("#chatFab").hidden = true; if (!started) { started = true; add("bot", `Hi! 👋 I'm Rev Auto's assistant. How can I help with your car today?`); chips(["Get an estimate", "Do you work with insurance?", "Hours", "Book an appointment"]); } setTimeout(() => $("#chatIn").focus(), 50); };
+  const open = () => { $("#chat").hidden = false; $("#chatFab").hidden = true; if (!started) { started = true; RevTrack.event("chat_open"); add("bot", `Hi! 👋 I'm Rev Auto's assistant. How can I help with your car today?`); chips(["Get an estimate", "Do you work with insurance?", "Hours", "Book an appointment"]); } setTimeout(() => $("#chatIn").focus(), 50); };
   const close = () => { $("#chat").hidden = true; $("#chatFab").hidden = false; };
   function ask(text) {
     if (!text.trim()) return; add("me", esc(text)); chips([]); window.RevContact.lastQuestion = text;
     const typing = add("bot", `<span class="typing"><i></i><i></i><i></i></span>`), r = reply(text);
+    RevTrack.event(r.miss ? "chat_miss" : "chat_q", text);
     setTimeout(() => { typing.innerHTML = r.html; log.scrollTop = log.scrollHeight; chips(r.chips); }, 350 + Math.min(700, r.html.length));
   }
   $("#chatFab").onclick = open; $("#chatX").onclick = close;
