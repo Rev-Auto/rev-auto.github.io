@@ -14,11 +14,14 @@
   <main class="lock" id="lock">
     <form class="lock__card" id="lockForm" autocomplete="on">
       <img class="lock__logo" src="../assets/img/logo-lux-dark.png" alt="Rev Auto" width="499" height="359" />
+      <div class="lock__ok" aria-live="polite"><i aria-hidden="true">✓</i><span id="okText">Unlocked</span></div>
+      <div class="lock__fields">
       <label class="lock__label" for="key">Passcode</label>
       <input id="key" name="password" type="password" autocomplete="current-password" required minlength="8" />
       <label class="lock__remember"><input type="checkbox" id="remember" checked /> Remember this device</label>
       <button type="submit" class="btn btn--gold" id="unlock">Unlock</button>
       <p class="lock__msg" id="lockMsg" role="alert"></p>
+      </div>
     </form>
   </main>
 

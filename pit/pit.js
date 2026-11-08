@@ -30,15 +30,34 @@
       if (fromLock || !S.data) { showLock(m); if (e.message === "wrong") store.clear(); } else toast(m);
     } finally { $("#refresh").disabled = false; }
   }
-  function showLock(m) { $("#app").hidden = true; $("#lock").hidden = false; $("#lockMsg").textContent = m || ""; $("#key").focus(); }
-  function showApp() { $("#lock").hidden = true; $("#app").hidden = false; $("#demoNote").hidden = !demo; }
+  function showLock(m) {
+    const lock = $("#lock"); lock.classList.remove("ok", "leaving");
+    $("#app").hidden = true; lock.hidden = false; $("#lockMsg").textContent = m || ""; $("#key").focus();
+  }
+  // after a correct passcode: gold check + "Unlocked", the lock fades away, the dashboard slides in at the top
+  function showApp() {
+    const lock = $("#lock"), app = $("#app");
+    $("#demoNote").hidden = !demo;
+    if (lock.hidden) { app.hidden = false; return; }
+    const quick = demo || matchMedia("(prefers-reduced-motion: reduce)").matches;
+    lock.classList.add("ok");
+    setTimeout(() => {
+      lock.classList.add("leaving");
+      setTimeout(() => {
+        lock.hidden = true; lock.classList.remove("ok", "leaving");
+        app.hidden = false; app.classList.add("entering"); scrollTo(0, 0);
+        setTimeout(() => app.classList.remove("entering"), 600);
+        if (lastDaily) renderLine(lastDaily);                            // the chart could not measure its width while hidden
+      }, quick ? 0 : 420);
+    }, quick ? 0 : 650);
+  }
 
   $("#lockForm").addEventListener("submit", async (e) => {
     e.preventDefault();
-    S.key = $("#key").value.trim(); $("#unlock").disabled = true; $("#lockMsg").textContent = "Checking…";
+    S.key = $("#key").value.trim(); $("#unlock").disabled = true; $("#unlock").innerHTML = '<span class="lock__spin" aria-hidden="true"></span>Unlocking…'; $("#lockMsg").textContent = "";
     await load(true);
     if (S.data) store.set(S.key, $("#remember").checked);
-    $("#unlock").disabled = false;
+    $("#unlock").disabled = false; $("#unlock").textContent = "Unlock";
   });
   $("#signOut").onclick = () => { store.clear(); S.key = ""; S.data = null; $("#key").value = ""; showLock("Signed out."); };
   $("#refresh").onclick = () => load();
@@ -242,5 +261,5 @@
   if (demo) { load(true); return; }
   if (!R.sheetsUrl) { showLock(ERR["not connected"]); return; }
   S.key = store.get();
-  if (S.key) load(true); else showLock("");
+  if (S.key) { $("#lock").classList.add("ok"); $("#okText").textContent = "Welcome back"; load(true); } else showLock("");
 })();

@@ -17,6 +17,7 @@
   }
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body { margin: 0; background: var(--page); color: var(--ink); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; }
 h2 { font-size: 1rem; margin: 0; }
 button, input, select { font: inherit; color: inherit; }
@@ -34,6 +35,18 @@ button, input, select { font: inherit; color: inherit; }
 .lock input[type=password]:focus { outline: 2px solid #d4a43a; outline-offset: 1px; }
 .lock__remember { font-size: .85rem; color: #c3c2b7; display: flex; gap: 8px; align-items: center; }
 .lock .btn--gold { justify-content: center; padding: 12px; font-size: 1rem; background: #d4a43a; color: #0b0b0b; }
+.lock { transition: opacity .45s ease, transform .45s ease; }
+.lock.leaving { opacity: 0; transform: scale(1.04); pointer-events: none; }
+.lock__ok { display: none; justify-items: center; gap: 8px; padding: 18px 0 6px; color: #f5d27a; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; font-size: .85rem; }
+.lock__ok i { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: 1.9rem; color: #0b0b0b; background: #d4a43a; box-shadow: 0 0 0 10px rgba(212, 164, 58, .18); animation: okpop .45s cubic-bezier(.2, 1.6, .4, 1); }
+@keyframes okpop { from { transform: scale(.3); opacity: 0; } }
+.lock__fields { display: contents; }
+.lock.ok .lock__ok { display: grid; } .lock.ok .lock__fields { display: none; }
+.app.entering { animation: appin .5s ease both; }
+@keyframes appin { from { opacity: 0; transform: translateY(14px); } }
+.lock__spin { display: inline-block; width: 14px; height: 14px; margin-right: 8px; vertical-align: -2px; border-radius: 50%; border: 2px solid rgba(11, 11, 11, .25); border-top-color: #0b0b0b; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .lock, .app.entering, .lock__ok i { transition: none; animation: none; } }
 .lock__msg { min-height: 1.4em; margin: 0; font-size: .88rem; color: #e66767; text-align: center; }
 
 /* layout */
