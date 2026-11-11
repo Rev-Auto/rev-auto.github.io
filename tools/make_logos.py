@@ -1,6 +1,7 @@
 """Make the website's logo files from the owner's logo (gold on a black background).
 
-Usage:  python3 tools/make_logos.py "/path/to/RevAuto logo (black).png"     (needs: pip install pillow)
+Usage:  python3 tools/make_logos.py assets/brand/revauto-logo-750.png      (needs: pip install pillow)
+        Works with a transparent PNG (used as is) or a logo on a black background (the black is removed).
 
 Writes to assets/img/:
   logo-luxe-dark.png        full logo, transparent background, bright gold   (Garage / Midnight themes, dashboard lock)
@@ -36,7 +37,7 @@ def transparent(src):
     return out
 
 
-def deepen(im, f=0.72):
+def deepen(im, f=0.6):
     """Deeper gold for white backgrounds."""
     r, g, b, a = im.split()
     return Image.merge("RGBA", [c.point(lambda v: round(v * f)) for c in (r, g, b)] + [a])
@@ -51,23 +52,18 @@ def crop(im, pad=10):
 
 
 def wordmark(im):
-    """The lettering only: the ring is thin, the letters are dense. Keep the columns from the first dense one."""
-    a = im.getchannel("A").point(lambda v: 255 if v > 60 else 0)
-    w, h = a.size
-    cols = [sum(1 for y in range(h) if a.getpixel((x, y))) for x in range(w)]
-    dense = [x for x, n in enumerate(cols) if n > h * 0.02]
-    # the ring's left side is also dense: skip it by starting after the first gap following it
-    start = dense[0]
-    for x in range(dense[0], w - 1):
-        if cols[x] <= h * 0.004 and x - dense[0] > w * 0.04:
-            start = x
-            break
-    word = im.crop((start, 0, w, h))
-    # drop the ring's thin right/bottom arc: keep rows that have real letter density
-    a2 = word.getchannel("A").point(lambda v: 255 if v > 60 else 0)
-    rows = [sum(1 for x in range(word.width) if a2.getpixel((x, y))) for y in range(word.height)]
-    keep = [y for y, n in enumerate(rows) if n > word.width * 0.012]
-    return crop(word.crop((0, keep[0], word.width, keep[-1] + 1)) if keep else word, 6)
+    """The lettering only, for the header: crop the text area (the ring is thin and stays outside it on the left
+    and bottom), then fade out what's left of the ring's thin right edge."""
+    w, h = im.size
+    word = im.crop((int(w * 0.135), int(h * 0.30), w, int(h * 0.86)))
+    px = word.load()
+    cx, cy, r = w * 0.415 - w * 0.135, h * 0.495 - h * 0.30, w * 0.40    # ring centre and radius (in crop coordinates)
+    for y in range(word.height):
+        for x in range(word.width):
+            d = ((x - cx) ** 2 + (y - cy) ** 2) ** 0.5
+            if abs(d - r) < w * 0.018 and x < w * 0.18:             # ring pieces at the crop's left edge
+                p = px[x, y]; px[x, y] = (p[0], p[1], p[2], 0)
+    return crop(word, 6)
 
 
 def fit(im, width):
@@ -77,7 +73,8 @@ def fit(im, width):
 
 def main(path):
     src = Image.open(path)
-    full = crop(transparent(src))
+    has_alpha = src.mode in ("RGBA", "LA") and src.getchannel("A").getextrema()[0] < 250
+    full = crop(src.convert("RGBA") if has_alpha else transparent(src))
     word = wordmark(full)
     jobs = {
         "logo-luxe-dark.png": fit(full, 600), "logo-luxe-light.png": fit(deepen(full), 600),

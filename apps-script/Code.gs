@@ -9,7 +9,7 @@
  * Script properties (Project Settings > Script properties):
  *   ADMIN_KEY      dashboard passcode (required)
  *   SHOP_EMAIL     where booking emails go (default revautosrq@gmail.com)
- *   SITE_URL       the website (default https://ftalla18.github.io/revauto/)
+ *   SITE_URL       the website (default https://rev-auto.github.io/)
  * Setup steps: see SETUP.md next to this file.
  */
 
@@ -27,7 +27,7 @@ const ICONS = ["car", "hammer", "spray", "dent", "bumper", "radio", "search", "s
 
 function prop(k, d) { return PropertiesService.getScriptProperties().getProperty(k) || d || ""; }
 const SHOP_EMAIL = () => prop("SHOP_EMAIL", "revautosrq@gmail.com");
-const SITE_URL = () => prop("SITE_URL", "https://ftalla18.github.io/revauto/");
+const SITE_URL = () => prop("SITE_URL", "https://rev-auto.github.io/");
 
 // ---------- one-time setup (run from the editor; safe to run again after updates)
 function setup() {

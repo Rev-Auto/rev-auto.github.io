@@ -1,6 +1,6 @@
 # Rev Auto website
 
-Family-owned collision & body repair, 2133 19th St, Sarasota, FL. Static site (GitHub Pages).
+Family-owned collision & body repair, 2133 19th St, Sarasota, FL. Static site (GitHub Pages): **https://rev-auto.github.io/** (the old address, ftalla18.github.io/revauto/, forwards here).
 
 ## Edit
 - **Most content is edited in the dashboard** (`pit/` → **🌐 Website**): every section's headings, tiles (add, delete, reorder, pick an icon), FAQ, gallery photos (upload, caption, reorder), shop-floor videos (reorder, caption, hide), and the owner's cartoon picture. **Publish** and visitors see it within about 5 minutes; **History** restores any of the last 30 versions.
@@ -11,7 +11,7 @@ Family-owned collision & body repair, 2133 19th St, Sarasota, FL. Static site (G
 - Logo: "Rev Auto · Luxe Paint & Repair" in `assets/img/logo-luxe-*.png`: full logo in the hero and footer, the `-word` version in the header; `-light` for the Showroom theme, `-dark` for Garage/Midnight. To replace it: `python3 tools/make_logos.py "<logo on black>.png"` makes all four plus the phone icon.
 - Mr. Uriel's cartoon persona: `assets/img/mr-uriel.png` (owner card) and `mr-uriel-96.png` (chat button).
 - Reels strip ("From the shop floor"): clips in `assets/media/reels/` listed in `assets/media/reels.json`.
-- QR codes (all open https://ftalla18.github.io/revauto/): `qr/revauto-qr-gold-on-black.png`, `qr/revauto-qr-print.png` (for printing), `qr/revauto-qr-plain.svg` (any size).
+- QR codes (they open the old address, which forwards to https://rev-auto.github.io/): `qr/revauto-qr-gold-on-black.png`, `qr/revauto-qr-print.png` (for printing), `qr/revauto-qr-plain.svg` (any size).
 
 ## Themes
 Auto (default) follows the time of day: Showroom (white/blue/orange) 7am–5pm, Garage (blue/orange/gold) 5–8pm and 5–7am, Midnight (black/gold) at night. Visitors can pick one from the palette button (bottom-left); it's remembered.

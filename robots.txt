@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://ftalla18.github.io/revauto/sitemap.xml
+Sitemap: https://rev-auto.github.io/sitemap.xml

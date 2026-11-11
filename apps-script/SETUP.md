@@ -48,7 +48,7 @@ Share the passcode with Mr. Uriel in person or by private message. After 8 wrong
 
 ## 5. Open the dashboard
 
-**To get there:** on the website, scroll to the very bottom and tap the **© 2026 Rev Auto** line **5 times quickly**. You can also go straight to `https://ftalla18.github.io/revauto/pit/`. Nothing on the site points there, and search engines are told to skip it.
+**To get there:** on the website, scroll to the very bottom and tap the **© 2026 Rev Auto** line **5 times quickly**. You can also go straight to `https://rev-auto.github.io/pit/`. Nothing on the site points there, and search engines are told to skip it.
 
 **To sign in:** enter the passcode, leave **Remember this device** checked, and tap **Unlock**. On a phone, use **Share → Add to Home Screen** so it opens like an app.
 
@@ -68,6 +68,6 @@ Share the passcode with Mr. Uriel in person or by private message. After 8 wrong
 | Property | What it does | Default |
 |---|---|---|
 | `SHOP_EMAIL` | Where booking emails go | `revautosrq@gmail.com` |
-| `SITE_URL` | The website's address (used in emails) | `https://ftalla18.github.io/revauto/` |
+| `SITE_URL` | The website's address (used in emails) | `https://rev-auto.github.io/` |
 
 Emails are sent from the Google account that owns the script, with **Reply-to** set so the customer's replies reach the shop. A free Gmail account can send about 100 emails a day this way.
