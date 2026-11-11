@@ -81,7 +81,7 @@ function saveBooking(d) {
   if (!name || !phone || !vehicle) return { ok: false, error: "missing" };
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: "email" };
   if (!allow("book:" + (clean(d.visitor, 20) || phone), 5, 3600)) return { ok: false, error: "slow down" };
-  if (!allow("book:all", 60, 3600)) return { ok: false, error: "slow down" };   // site-wide cap: a spammer can fake visitor IDs
+  if (!allow("book:all", 20, 3600) || !allow("book:day", 60, 86400)) return { ok: false, error: "slow down" };   // site-wide caps: a spammer can fake visitor IDs
   const tz = Session.getScriptTimeZone(), now = new Date();
   const ref = "RA-" + Utilities.formatDate(now, tz, "MMdd") + "-" + Math.random().toString(36).slice(2, 6).toUpperCase();
 
@@ -98,7 +98,8 @@ function saveBooking(d) {
   const row = [ref, now, name, phone, email, vehicle, clean(d.service, 60), d.insurance ? "Yes" : "No",
     clean(d.date, 10), clean(d.time, 40), clean(d.details, 1500), "New", "", clean(d.source, 30), links.join("\n"), ""];
   withLock(() => { const sh = sheet("Bookings"); ensureHead(sh, "Bookings"); sh.appendRow(row.map(safeCell)); });
-  try { emailShop({ ref, name, phone, email, vehicle, service: clean(d.service, 60), insurance: !!d.insurance, date: clean(d.date, 10),
+  // keep ~15 emails a day in reserve for confirmations; the request is saved either way and shows in the dashboard
+  if (MailApp.getRemainingDailyQuota() > 15) try { emailShop({ ref, name, phone, email, vehicle, service: clean(d.service, 60), insurance: !!d.insurance, date: clean(d.date, 10),
     time: clean(d.time, 40), details: clean(d.details, 1500) }, blobs); } catch (err) { console.error("shop email failed", err); }
   return { ok: true, ref, photos: links.length };
 }
@@ -240,7 +241,7 @@ function admin(d) {
 
 function checkKey(key) {
   const cache = CacheService.getScriptCache(), fails = Number(cache.get("fails") || 0);
-  if (fails >= 8) return "locked";                                      // 8 wrong tries -> 15 minute lockout
+  if (fails >= 20) return "locked";                                     // 20 wrong tries -> 15 minute pause (a long passcode can't be guessed in 20)
   const real = prop("ADMIN_KEY");
   if (!real || real.length < 8) return "not set up";
   if (String(key || "") === real) return true;

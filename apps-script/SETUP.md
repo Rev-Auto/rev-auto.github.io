@@ -34,7 +34,7 @@ This gives Rev Auto:
    - **Value:** a long passcode (at least 12 characters). Three or four random words work well, for example `torque-velvet-harbor-91`.
 3. Click **Save script properties**.
 
-Share the passcode with Mr. Uriel in person or by private message. After 8 wrong tries, the dashboard locks for 15 minutes.
+Share the passcode with Mr. Uriel in person or by private message. After 20 wrong tries, the dashboard pauses sign-ins for 15 minutes.
 
 ## 4. Publish it as a web app
 

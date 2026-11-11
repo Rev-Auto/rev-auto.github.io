@@ -20,6 +20,7 @@ Auto (default) follows the time of day: Showroom (white/blue/orange) 7am–5pm, 
 Built-in (`js/bot.js`), answers from the published content; unknown questions go to the owner by email (or WhatsApp) with the question pre-filled. To use Botpress instead, upload `botpress/revauto-knowledge.md` as a knowledge source and paste the two webchat script URLs into `config.js`.
 
 ## Bookings database + private dashboard
+- Moving the Google side to Rev Auto's own Gmail: see `apps-script/HANDOVER.md`.
 - Booking requests (with up to 5 photos, shrunk on the customer's phone) go to the Google Sheet, which emails the shop at revautosrq@gmail.com right away with the photos and an **Approve** button. Approving (from the email or the dashboard) marks it Confirmed and emails the customer a confirmation with a calendar invite. Photos are kept privately in the shop's Google Drive and show on each request in the dashboard.
 - `apps-script/Code.gs` runs inside that Google Sheet (setup: `apps-script/SETUP.md`). Its URL goes in `js/config.js` as `sheetsUrl`; leave it empty to switch the Sheet and stats off.
 - `js/track.js`: anonymous, cookie-free stats (visits, source incl. `?src=qr`, device, email/call taps, chatbot questions).
