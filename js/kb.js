@@ -4,7 +4,7 @@ window.REV_KB = {
   about: "Rev Auto is a family-owned body shop at 2133 19th St in Sarasota, with over 10 years of experience repairing cars, specializing in high-end, custom and exotic vehicles. Insurance jobs, walk-ins and custom work are all welcome, from everyday cars to Aston Martins and classic restorations. The owner is honest with every customer and treats every car like it's his own: you'll never feel like money comes before your satisfaction.",
 
   difference: [
-    ["Free estimates", "Stop by or send photos. We look at the damage and give you a clear written estimate, free."],
+    ["Free estimates", "Stop by or send photos with your booking. We look at the damage and give you a clear written estimate, free."],
     ["We notice the little things", "Point out that extra scratch or scuff. We'll take a look, and we're honest about what's worth fixing."],
     ["Honest, straight talk", "Honest written estimates, no upselling, no surprises, and a lifetime warranty on our labor. If something doesn't need fixing, we'll tell you."],
     ["High-end care for every car", "10+ years with exotic, luxury and everyday cars alike, from a Porsche 912 to a Ram TRX."],
@@ -23,7 +23,7 @@ window.REV_KB = {
   ],
 
   faq: [
-    ["How do I get an estimate?", "Estimates are free. Stop by, book an appointment online, or send us photos of the damage on WhatsApp. We'll give you a clear written estimate before any work starts."],
+    ["How do I get an estimate?", "Estimates are free. Stop by, or book an appointment online and add up to 5 photos of the damage. We'll give you a clear written estimate before any work starts."],
     ["Do you work with insurance?", "Yes. We write a detailed estimate your insurer can pay directly. Bring your claim number and insurance details, and we'll help with the process."],
     ["Do you offer a warranty?", "Yes. Our labor is warrantied for life for the current owner of the car, and parts carry the manufacturer's warranty (usually 6 to 12 months)."],
     ["Will I get a written estimate?", "Always, and it's free. You get an honest written estimate before any work starts, and we won't go over it without your approval."],

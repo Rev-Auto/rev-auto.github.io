@@ -3,10 +3,11 @@
 This gives Rev Auto:
 
 - **A "Bookings" spreadsheet.** Every appointment request lands there, with a reference number and a Status column (New / Confirmed / Done / Cancelled / No-show).
-- **Anonymous visit stats.** It records visits, where visitors came from, WhatsApp/Call taps and the questions people ask the chatbot.
+- **Anonymous visit stats.** It records visits, where visitors came from, email/call taps and the questions people ask the chatbot.
 - **The private dashboard** at `/pit/`, which opens with a passcode.
 
-Booking emails through Web3Forms keep working exactly as before. The Sheet is an extra copy.
+- **Instant booking emails** to the shop (revautosrq@gmail.com) with the customer's photos and a one-click **Approve** button. Approving emails the customer a confirmation with a calendar invite.
+- **The Website tab** in the dashboard, where the website's text, tiles and photos can be edited without code.
 
 ## 1. Create the Sheet
 
@@ -58,5 +59,15 @@ Share the passcode with Mr. Uriel in person or by private message. After 8 wrong
 ## Changing the script later
 
 1. Paste in the new `Code.gs` and save.
-2. Click **Deploy → Manage deployments → ✏️ Edit**, set **Version** to **New version**, and click **Deploy**.
-3. The URL stays the same, so the website doesn't need to change.
+2. In the function menu choose **setup** and click **▶ Run** again. Google asks for new permissions this time (**Gmail** to send the booking emails, **Drive** for the photos): click **Review permissions → Advanced → Go to RevAuto website (unsafe) → Allow**.
+3. Click **Deploy → Manage deployments → ✏️ Edit**, set **Version** to **New version**, and click **Deploy**.
+4. The URL stays the same, so the website doesn't need to change.
+
+### Optional script properties
+
+| Property | What it does | Default |
+|---|---|---|
+| `SHOP_EMAIL` | Where booking emails go | `revautosrq@gmail.com` |
+| `SITE_URL` | The website's address (used in emails) | `https://ftalla18.github.io/revauto/` |
+
+Emails are sent from the Google account that owns the script, with **Reply-to** set so the customer's replies reach the shop. A free Gmail account can send about 100 emails a day this way.

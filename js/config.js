@@ -12,12 +12,13 @@ window.REV = {
   years: "10+",
   facebook: "https://www.facebook.com/revautosrq/",
 
-  // Phone used for WhatsApp and Call buttons, split into pieces so it never appears on the page as text.
+  // Phone used for the Call button (and WhatsApp in the chatbot), split into pieces so it never appears on the page as text.
   // Example for (941) 555-0123: ["+1", "941", "555", "01", "23"]. Leave empty until we have it.
   phone: ["+1", "941", "548", "77", "32"], // shop line from the estimate; WhatsApp only works if this number has WhatsApp
 
-  // Free email copy of every booking request: create a key at https://web3forms.com with the shop's email.
-  web3formsKey: "66067dfe-54fb-48a6-8984-a74f0a823a90", // sends to the shop's email (never shown on the site)
+  // Shop email for the "Email us" buttons, split so it never appears on the page as text (spam bots read pages).
+  // Booking emails are sent by the Google Sheet's script (apps-script/Code.gs, SHOP_EMAIL property).
+  email: ["revautosrq", "gmail.com"],
 
   // From the shop's Google listing.
   hours: [["Monday – Friday", "8:30 AM – 5:30 PM"], ["Saturday", "10:00 AM – 3:00 PM"], ["Sunday", "Closed"]],

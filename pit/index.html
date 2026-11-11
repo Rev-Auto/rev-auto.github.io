@@ -5,16 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex, nofollow, noarchive" />
   <meta name="referrer" content="no-referrer" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src https://script.google.com https://script.googleusercontent.com; base-uri 'none'; form-action 'none'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://drive.google.com https://*.googleusercontent.com; connect-src 'self' https://script.google.com https://script.googleusercontent.com; base-uri 'none'; form-action 'none'" />
   <title>Rev Auto</title>
   <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="pit.css?v=202611081256" />
+  <link rel="stylesheet" href="pit.css?v=202611111257" />
 </head>
 <body>
   <!-- lock screen -->
   <main class="lock" id="lock">
     <form class="lock__card" id="lockForm" autocomplete="on">
-      <img class="lock__logo" src="../assets/img/logo-lux-dark.png" alt="Rev Auto" width="499" height="359" />
+      <img class="lock__logo" src="../assets/img/logo-luxe-dark.png" alt="Rev Auto" width="499" height="359" />
       <div class="lock__ok" aria-live="polite"><i aria-hidden="true">✓</i><span id="okText">Unlocked</span></div>
       <div class="lock__fields">
       <label class="lock__label" for="key">Passcode</label>
@@ -29,8 +29,11 @@
   <!-- dashboard -->
   <div class="app" id="app" hidden>
     <header class="bar">
-      <div class="bar__brand"><picture><source srcset="../assets/img/logo-lux-light-word.png" media="(prefers-color-scheme: light)" /><img src="../assets/img/logo-lux-dark-word.png" alt="Rev Auto" width="436" height="211" /></picture><span>Shop dashboard</span></div>
-      <div class="bar__tools">
+      <div class="bar__brand"><picture><source srcset="../assets/img/logo-luxe-light-word.png" media="(prefers-color-scheme: light)" /><img src="../assets/img/logo-luxe-dark-word.png" alt="Rev Auto" width="436" height="211" /></picture><span>Shop dashboard</span></div>
+      <div class="seg views" role="tablist" aria-label="Dashboard section" id="views">
+        <button type="button" data-view="shop" class="on" role="tab">📋 Bookings &amp; stats</button><button type="button" data-view="site" role="tab">🌐 Website</button>
+      </div>
+      <div class="bar__tools" id="shopTools">
         <div class="seg" role="group" aria-label="Date range" id="range">
           <button type="button" data-days="7">7 days</button><button type="button" data-days="30">30 days</button><button type="button" data-days="90">90 days</button><button type="button" data-days="365">1 year</button>
         </div>
@@ -41,6 +44,7 @@
     </header>
     <p class="demo" id="demoNote" hidden>Sample data: this is a preview. Real bookings and visits show up once the Google Sheet is connected.</p>
 
+    <div id="viewShop">
     <section class="tiles" id="tiles" aria-label="Key numbers"></section>
 
     <section class="panel" id="appointments">
@@ -78,11 +82,17 @@
     </section>
 
     <footer class="foot">Everything here lives in your Google Sheet. This device is left out of visitor counts.</footer>
+    </div>
+
+    <div id="viewSite" hidden><div id="editor"></div></div>
   </div>
 
   <div class="tip" id="tip" role="tooltip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
-  <script src="../js/config.js?v=202611081256"></script>
-  <script src="pit.js?v=202611081256"></script>
+  <script src="../js/config.js?v=202611111257"></script>
+  <script src="../js/kb.js?v=202611111257"></script>
+  <script src="../js/content.js?v=202611111257"></script>
+  <script src="pit.js?v=202611111257"></script>
+  <script src="editor.js?v=202611111257"></script>
 </body>
 </html>

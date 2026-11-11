@@ -1,6 +1,7 @@
-// Rev Auto site: themes, page content from kb.js, booking requests, hidden-number WhatsApp / Call buttons.
+// Rev Auto site: themes, page content (content.js: defaults + the owner's published edits), booking requests
+// with photos, and email / call buttons whose details never appear on the page as text.
 (function () {
-  const R = window.REV, K = window.REV_KB, $ = (s) => document.querySelector(s);
+  const R = window.REV, C = window.RevContent, $ = (s) => document.querySelector(s);
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const toast = (m, ms = 3500) => { const t = $("#toast"); t.textContent = m; t.classList.add("show"); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), ms); };
   window.revToast = toast;
@@ -23,47 +24,163 @@
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") showPanel(false); });
   setInterval(() => { if (document.documentElement.dataset.choice === "auto") setTheme("auto"); }, 600000);
 
-  // ---------- contact without showing the number
+  // ---------- contact without showing the number or the email address
   const num = () => R.phone.join("");
+  const mail = () => (R.email || []).join("@");
   window.RevContact = {
     lastQuestion: "",
     ready: () => R.phone.length > 0,
-    whatsapp(body) {
-      if (!this.ready()) return toast("WhatsApp is coming soon. Use the booking form for now.");
+    whatsapp(body) {   // kept for the chatbot
+      if (!this.ready()) return toast("WhatsApp is coming soon. Use email or the booking form for now.");
       const text = body || (this.lastQuestion ? `Hi Rev Auto, I'm reaching out from your website.\n\n${this.lastQuestion}` : "Hi Rev Auto, I'm reaching out from your website.");
       RevTrack.event("wa", this.lastQuestion ? "from chat" : "");
       window.open(`https://wa.me/${num().replace("+", "")}?text=${encodeURIComponent(text)}`, "_blank", "noopener");
     },
+    email(subject, body) {
+      if (!mail()) return toast("Email is coming soon. Use the booking form for now.");
+      const q = this.lastQuestion;
+      RevTrack.event("email", q ? "from chat" : "");
+      location.href = `mailto:${mail()}?subject=${encodeURIComponent(subject || "Question from your website")}&body=${encodeURIComponent(body || (q ? `Hi Rev Auto,\n\n${q}\n\n` : "Hi Rev Auto,\n\n"))}`;
+    },
     call() { if (!this.ready()) return toast("Phone number coming soon. Use the booking form for now."); RevTrack.event("call"); location.href = "tel:" + num(); },
   };
   document.addEventListener("click", (e) => {
-    const el = e.target.closest('[data-contact], a[href="#wa"], a[href="#call"]'); if (!el) return;
+    const el = e.target.closest('[data-contact], a[href="#wa"], a[href="#call"], a[href="#email"]'); if (!el) return;
     e.preventDefault();
     const kind = el.dataset.contact || el.getAttribute("href").slice(1);
-    kind === "call" ? RevContact.call() : RevContact.whatsapp(el.dataset.body || "");
+    kind === "call" ? RevContact.call() : kind === "email" ? RevContact.email(el.dataset.subject, el.dataset.body) : RevContact.whatsapp(el.dataset.body || "");
   });
 
-  // ---------- content
-  const ICONS = {
-    car: '<path d="M5 17h14M3 13l2-6a2 2 0 0 1 2-1.4h10A2 2 0 0 1 19 7l2 6v4a1 1 0 0 1-1 1h-1M4 18H3a1 1 0 0 1-1-1v-4h20"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>',
-    hammer: '<path d="M14 6l4 4M3 21l9-9M12.5 4.5l7 7-2 2-7-7z"/>',
-    spray: '<rect x="6" y="9" width="8" height="12" rx="2"/><path d="M8 9V6h4v3M15 4h1M18 3h1M18 6h2M15 7h1"/>',
-    dent: '<path d="M3 15c3 0 4-4 9-4s6 4 9 4"/><path d="M3 19h18M8 7l1 2M16 7l-1 2M12 5v3"/>',
-    bumper: '<path d="M2 12h20v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z"/><path d="M6 12V9h12v3M7 15h2M15 15h2"/>',
-    radio: '<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="16" cy="12" r="3"/><path d="M6 10h5M6 13h5"/>',
-    search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
-    star: '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
-    spark: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/>',
-    handshake: '<path d="M2 12l5-5 4 2 3-2 3 1 5 4-5 5-3-3-4 4-3-3-2 2z"/>',
-    shield: '<path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
-  };
-  const icon = (n) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICONS[n] || ICONS.star}</svg>`;
-  window.revIcon = icon;
-  const diffIcons = ["spark", "search", "handshake", "shield"];
-  $("#diffGrid").innerHTML = K.difference.map(([t, d], i) => `<div class="card"><span class="ic">${icon(diffIcons[i])}</span><h3>${esc(t)}</h3><p>${esc(d)}</p></div>`).join("");
-  $("#svcGrid").innerHTML = K.services.map((s) => `<div class="card"><span class="ic">${icon(s.icon)}</span><h3>${esc(s.name)}</h3><p>${esc(s.short)}</p><button class="ask" type="button" data-ask="Tell me about ${esc(s.name.toLowerCase())}">Ask about this →</button></div>`).join("");
-  $("#svcSelect").innerHTML = `<option value="">Choose…</option>` + K.services.map((s) => `<option>${esc(s.name)}</option>`).join("") + "<option>Something else</option>";
-  $("#faqList").innerHTML = K.faq.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join("");
+  // ---------- phone menu (☰)
+  const top = $(".top"), burger = $("#burger");
+  const setMenu = (on) => { top.classList.toggle("is-open", on); burger.setAttribute("aria-expanded", on); };
+  burger.onclick = (e) => { e.stopPropagation(); setMenu(!top.classList.contains("is-open")); };
+  $("#nav").addEventListener("click", (e) => { if (e.target.closest("a")) setMenu(false); });
+  document.addEventListener("click", (e) => { if (!e.target.closest(".top")) setMenu(false); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") setMenu(false); });
+
+  // ---------- balanced tile rows: as many columns as fit (min width from data-balance), every row full
+  // e.g. 7 services on 3 columns -> 3·2·2 (not 3·3·1); 9 -> 3·3·3. Phones get one per row.
+  function balance(grid) {
+    const cards = [...grid.children]; if (!cards.length) return;
+    const gap = parseFloat(getComputedStyle(grid).columnGap) || 16;
+    let cols = Math.max(1, Math.floor((grid.clientWidth + gap) / (+grid.dataset.balance + gap)));
+    cols = Math.min(cols, cards.length);
+    if (cards.length % cols && cols > 2 && cards.length % (cols - 1) === 0) cols -= 1;
+    const n = cards.length, rows = Math.max(1, Math.floor(n / cols)), left = n - rows * cols;
+    const sizes = Array.from({ length: rows }, (_, r) => cols + Math.floor(left / rows) + (r < left % rows ? 1 : 0));
+    let i = 0;
+    for (const k of sizes) for (let j = 0; j < k; j++, i++) cards[i].style.flex = `0 0 calc((100% - ${(k - 1) * gap}px) / ${k})`;
+  }
+  const balanceAll = () => document.querySelectorAll("[data-balance]").forEach(balance);
+  addEventListener("resize", balanceAll);
+
+  // ---------- page content
+  window.revIcon = C.icon;
+  const get = (obj, path) => path.split(".").reduce((o, k) => (o == null ? o : o[k]), obj);
+  let current = null;
+
+  function renderText(c) {
+    document.querySelectorAll("[data-c]").forEach((el) => {
+      const v = get(c, el.dataset.c);
+      if (typeof v === "string") { el.textContent = v; el.hidden = !v; }
+    });
+    setAvatar(c.owner.avatar);
+    $("#heroFacts").innerHTML = c.hero.facts.map((f) => `<li><b>${esc(f.big)}</b><span>${esc(f.small)}</span></li>`).join("");
+    $("#diffGrid").innerHTML = c.sections.difference.items.map((t) => `<div class="card"><span class="ic">${C.icon(t.icon)}</span><h3>${esc(t.title)}</h3><p>${esc(t.text)}</p></div>`).join("");
+    $("#svcGrid").innerHTML = c.sections.services.items.map((s) => `<div class="card"><span class="ic">${C.icon(s.icon)}</span><h3>${esc(s.title)}</h3><p>${esc(s.text)}</p><button class="ask" type="button" data-ask="Tell me about ${esc(s.title.toLowerCase())}">Ask about this →</button></div>`).join("");
+    $("#howSteps").innerHTML = c.sections.how.items.map((s) => `<li><b>${esc(s.title)}</b><span>${esc(s.text)}</span></li>`).join("");
+    const keep = $("#svcSelect").value;
+    $("#svcSelect").innerHTML = `<option value="">Choose…</option>` + c.sections.services.items.map((s) => `<option>${esc(s.title)}</option>`).join("") + "<option>Something else</option>";
+    $("#svcSelect").value = keep;
+    balanceAll();
+    $("#faqList").innerHTML = c.sections.faq.items.map((f) => `<details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join("");
+    C.teachBot(c);
+  }
+
+  // the owner's cartoon: owner card (large) and the chatbot's button + header (small)
+  function setAvatar(src) {
+    const swap = (img, size) => {
+      const url = C.avatarUrl(src, "", size); if (img.getAttribute("src") === url) return;
+      img.onerror = () => { img.onerror = null; img.src = C.avatarUrl("", "", size); };
+      img.src = url;
+    };
+    const card = $("#ownerImg"); if (card) swap(card, 360);
+    document.querySelectorAll(".chat-ava").forEach((img) => swap(img, 96));
+    window.revAvatar = src;
+  }
+
+  function renderGallery(items) {
+    const g = $("#gallery");
+    if (!items.length) {
+      g.innerHTML = ["Before & after photos", "Paint & refinishing", "Collision repair", "Detail work", "Shop & team", "Radio installs", "Finished cars"].map((t, i) => `<div class="ph${i === 0 ? " big" : ""}"><span><b>${t}</b>Photos from @revautosrq coming soon</span></div>`).join("");
+      return;
+    }
+    g.innerHTML = items.map((m, i) => `<figure class="${i === 0 ? "big" : ""}">${/\.(mp4|webm|mov)$/i.test(m.src)
+      ? `<video src="${C.mediaUrl(m.src, "")}"${m.poster ? ` poster="${C.mediaUrl(m.poster, "")}"` : ""} muted loop playsinline autoplay preload="metadata" aria-label="${esc(m.alt || m.caption || "")}"></video>`
+      : `<img src="${C.mediaUrl(m.src, "", i === 0 ? 1600 : 900)}" alt="${esc(m.alt || m.caption || "Rev Auto repair")}" loading="lazy" referrerpolicy="no-referrer" />`}${m.caption ? `<figcaption>${esc(m.caption)}</figcaption>` : ""}</figure>`).join("");
+    fill();
+  }
+  // no holes: stretch the last tile across whatever the final row leaves empty (any column count)
+  function fill() {
+    const g = $("#gallery"), last = g.lastElementChild; if (!last || last.classList.contains("ph")) return;
+    const n = g.children.length, cols = getComputedStyle(g).gridTemplateColumns.split(" ").length;
+    last.classList.remove("span2", "span3");
+    const used = n - 1 + 4, left = (cols - (used % cols)) % cols; // big tile = 2x2 = 4 cells
+    if (left) last.classList.add(`span${Math.min(3, left + 1)}`);
+  }
+  addEventListener("resize", fill);
+
+  // reels: clips load and play only while on screen; the strip drifts along by itself until someone touches it
+  let reelTimer = null;
+  function renderReels(reels) {
+    const wrap = $(".reels"), track = $("#reels");
+    if (!reels.length) { wrap.hidden = true; return; }
+    wrap.hidden = false;
+    track.innerHTML = reels.map((m) => `<figure class="reel"><div class="reel__bg" style="background-image:url('assets/media/reels/${encodeURIComponent(m.src)}.jpg')"></div><video muted loop playsinline preload="none" poster="assets/media/reels/${encodeURIComponent(m.src)}.jpg" data-src="assets/media/reels/${encodeURIComponent(m.src)}.mp4" aria-label="${esc(m.caption)}"></video><figcaption>${esc(m.caption)}</figcaption></figure>`).join("");
+    const io = new IntersectionObserver((es) => es.forEach(({ target: v, isIntersecting }) => {
+      if (isIntersecting) { if (!v.src) v.src = v.dataset.src; v.play().catch(() => {}); } else v.pause();
+    }), { threshold: 0.6 });
+    track.querySelectorAll("video").forEach((v) => io.observe(v));
+    if (reelTimer) return;                                             // controls are wired once
+    const step = () => (track.querySelector(".reel") || { offsetWidth: 240 }).offsetWidth + 14;
+    const bar = () => ($("#reelsBar").style.width = Math.min(100, ((track.scrollLeft + track.clientWidth) / track.scrollWidth) * 100) + "%");
+    track.addEventListener("scroll", bar, { passive: true }); bar();
+    let idle = true, visible = false, resume;
+    const touch = () => { idle = false; clearTimeout(resume); resume = setTimeout(() => (idle = true), 9000); };
+    ["pointerdown", "wheel", "touchstart", "keydown", "mouseenter"].forEach((ev) => track.addEventListener(ev, touch, { passive: true }));
+    new IntersectionObserver(([e]) => (visible = e.isIntersecting), { threshold: 0.3 }).observe(track);
+    document.querySelectorAll(".reels__nav button").forEach((b) => (b.onclick = () => { touch(); track.scrollBy({ left: step() * 2 * b.dataset.dir }); }));
+    reelTimer = matchMedia("(prefers-reduced-motion: reduce)").matches ? 1 : setInterval(() => {
+      if (!idle || !visible || document.hidden) return;
+      const end = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
+      track.scrollTo({ left: end ? 0 : track.scrollLeft + step() });
+    }, 3500);
+  }
+
+  function render(c) {
+    const sig = JSON.stringify(c);
+    if (current === sig) return;
+    current = sig;
+    renderText(c);
+    renderGallery(c.sections.work.items);
+    renderReels(c.sections.reels.items);
+  }
+
+  // 1) defaults + whatever this device saw last time, right away; 2) the latest published version from the Sheet
+  (async () => {
+    const preview = C.draft();
+    if (preview) {
+      document.body.insertAdjacentHTML("afterbegin", `<div class="preview-bar">Preview of unpublished changes · <a href="./">see the live site</a></div>`);
+      return render(C.merge(await C.withMedia(C.base(), ""), preview));
+    }
+    renderText(C.merge(C.base(), C.cached()));
+    const def = await C.withMedia(C.base(), "");
+    render(C.merge(def, C.cached()));
+    const live = await C.fetchLive();
+    if (live) render(C.merge(def, live));
+  })();
+
   $("#addr").textContent = R.address; $("#footAddr").textContent = R.address;
   $("#hours").innerHTML = R.hours.map(([d, h]) => `<tr><td>${esc(d)}</td><td><b>${esc(h)}</b></td></tr>`).join("");
   $("#map").src = R.mapEmbed; $("#mapsLink").href = R.mapsUrl;
@@ -80,50 +197,40 @@
     if (taps.length >= 5) location.href = "pit/";
   });
 
-  // gallery: drop photos/videos in assets/media and list them in assets/media/gallery.json
-  fetch("assets/media/gallery.json").then((r) => (r.ok ? r.json() : [])).catch(() => []).then((items) => {
-    const g = $("#gallery");
-    if (!items.length) {
-      g.innerHTML = ["Before & after photos", "Paint & refinishing", "Collision repair", "Detail work", "Shop & team", "Radio installs", "Finished cars"].map((t, i) => `<div class="ph${i === 0 ? " big" : ""}"><span><b>${t}</b>Photos from @revautosrq coming soon</span></div>`).join("");
-      return;
+  // ---------- booking photos: up to 5, shrunk on this device before sending (about 200–400 KB each)
+  const MAX_PHOTOS = 5, photos = [];
+  async function shrink(file) {
+    const url = URL.createObjectURL(file);
+    try {
+      const img = await new Promise((ok, bad) => { const i = new Image(); i.onload = () => ok(i); i.onerror = bad; i.src = url; });
+      const scale = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight));
+      const cv = document.createElement("canvas"); cv.width = Math.round(img.naturalWidth * scale); cv.height = Math.round(img.naturalHeight * scale);
+      cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+      let q = 0.78, data = cv.toDataURL("image/jpeg", q);
+      while (data.length > 560000 && q > 0.45) { q -= 0.1; data = cv.toDataURL("image/jpeg", q); }   // keep each photo under ~400 KB
+      return data;
+    } finally { URL.revokeObjectURL(url); }
+  }
+  function drawPhotos() {
+    $("#photoList").innerHTML = photos.map((p, i) => `<figure><img src="${p}" alt="Photo ${i + 1}" /><button type="button" data-rm="${i}" aria-label="Remove photo ${i + 1}">×</button></figure>`).join("");
+    $("#photoCount").textContent = photos.length ? `${photos.length} of ${MAX_PHOTOS} photos` : `Up to ${MAX_PHOTOS} photos`;
+    $("#photoAdd").hidden = photos.length >= MAX_PHOTOS;
+  }
+  $("#photoInput").addEventListener("change", async (e) => {
+    const files = [...e.target.files].filter((f) => /^image\//.test(f.type) || /\.(heic|heif)$/i.test(f.name));
+    e.target.value = "";
+    if (photos.length + files.length > MAX_PHOTOS) toast(`Up to ${MAX_PHOTOS} photos: the first ${MAX_PHOTOS - photos.length} were added.`);
+    $("#photoCount").textContent = "Preparing photos…";
+    for (const f of files.slice(0, MAX_PHOTOS - photos.length)) {
+      try { photos.push(await shrink(f)); } catch { toast(`Couldn't read ${f.name}. Try a JPG or PNG.`); }
+      drawPhotos();
     }
-    g.innerHTML = items.map((m, i) => `<figure class="${i === 0 ? "big" : ""}">${/\.(mp4|webm|mov)$/i.test(m.src)
-      ? `<video src="assets/media/${m.src}"${m.poster ? ` poster="assets/media/${esc(m.poster)}"` : ""} muted loop playsinline autoplay preload="metadata" aria-label="${esc(m.alt || "")}"></video>`
-      : `<img src="assets/media/${m.src}" alt="${esc(m.alt || "Rev Auto repair")}" loading="lazy" />`}${m.caption ? `<figcaption>${esc(m.caption)}</figcaption>` : ""}</figure>`).join("");
-    // no holes: stretch the last tile across whatever the final row leaves empty (any column count)
-    const fill = () => {
-      const last = g.lastElementChild, cols = getComputedStyle(g).gridTemplateColumns.split(" ").length;
-      last.classList.remove("span2", "span3");
-      const used = items.length - 1 + 4, left = (cols - (used % cols)) % cols; // big tile = 2x2 = 4 cells
-      if (left) last.classList.add(`span${Math.min(3, left + 1)}`);
-    };
-    fill(); addEventListener("resize", fill);
+    drawPhotos();
   });
+  $("#photoList").addEventListener("click", (e) => { const b = e.target.closest("[data-rm]"); if (b) { photos.splice(+b.dataset.rm, 1); drawPhotos(); } });
+  drawPhotos();
 
-  // reels: clips load and play only while on screen; the strip drifts along by itself until someone touches it
-  fetch("assets/media/reels.json").then((r) => (r.ok ? r.json() : [])).catch(() => []).then((reels) => {
-    const track = $("#reels"); if (!reels.length) return track.closest(".reels").remove();
-    track.innerHTML = reels.map((m) => `<figure class="reel"><div class="reel__bg" style="background-image:url('assets/media/reels/${m.src}.jpg')"></div><video muted loop playsinline preload="none" poster="assets/media/reels/${m.src}.jpg" data-src="assets/media/reels/${m.src}.mp4" aria-label="${esc(m.caption)}"></video><figcaption>${esc(m.caption)}</figcaption></figure>`).join("");
-    const io = new IntersectionObserver((es) => es.forEach(({ target: v, isIntersecting }) => {
-      if (isIntersecting) { if (!v.src) v.src = v.dataset.src; v.play().catch(() => {}); } else v.pause();
-    }), { threshold: 0.6 });
-    track.querySelectorAll("video").forEach((v) => io.observe(v));
-    const step = () => track.querySelector(".reel").offsetWidth + 14;
-    const bar = () => ($("#reelsBar").style.width = Math.min(100, ((track.scrollLeft + track.clientWidth) / track.scrollWidth) * 100) + "%");
-    track.addEventListener("scroll", bar, { passive: true }); bar();
-    let idle = true, visible = false, resume;
-    const touch = () => { idle = false; clearTimeout(resume); resume = setTimeout(() => (idle = true), 9000); };
-    ["pointerdown", "wheel", "touchstart", "keydown", "mouseenter"].forEach((ev) => track.addEventListener(ev, touch, { passive: true }));
-    new IntersectionObserver(([e]) => (visible = e.isIntersecting), { threshold: 0.3 }).observe(track);
-    document.querySelectorAll(".reels__nav button").forEach((b) => (b.onclick = () => { touch(); track.scrollBy({ left: step() * 2 * b.dataset.dir }); }));
-    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) setInterval(() => {
-      if (!idle || !visible || document.hidden) return;
-      const end = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
-      track.scrollTo({ left: end ? 0 : track.scrollLeft + step() });
-    }, 3500);
-  });
-
-  // ---------- booking request -> Google Sheet + email (Web3Forms) at the same time; WhatsApp if both fail
+  // ---------- booking request -> Google Sheet + instant email to the shop (by the Sheet's script); email app if that fails
   const form = $("#bookForm"), msg = $("#bookMsg"), done = $("#bookDone");
   form.date.min = new Date().toISOString().slice(0, 10);
   const SLOT_START = { Morning: "0830", Midday: "1100", Afternoon: "1400" };
@@ -136,60 +243,57 @@
     const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Rev Auto//Booking//EN", "BEGIN:VEVENT",
       `UID:${Date.now()}@revauto`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").slice(0, 15)}Z`,
       `DTSTART:${day}T${hm}00`, `DTEND:${day}T${end}00`, `SUMMARY:Rev Auto: ${d.service} (requested)`,
-      `LOCATION:${R.address.replace(/,/g, "\\,")}`, `DESCRIPTION:Requested ${d.time}. Rev Auto will text or call to confirm.`, "END:VEVENT", "END:VCALENDAR"];
+      `LOCATION:${R.address.replace(/,/g, "\\,")}`, `DESCRIPTION:Requested ${d.time}. Rev Auto will email you to confirm.`, "END:VEVENT", "END:VCALENDAR"];
     return URL.createObjectURL(new Blob([lines.join("\r\n")], { type: "text/calendar" }));
   }
 
-  function showDone(d, when, ref) {
+  function showDone(d, when, ref, sent) {
     const first = d.name.trim().split(/\s+/)[0];
     done.innerHTML = `<div class="done__check" aria-hidden="true">✓</div>
       <h3>Request sent!</h3>
-      <p>Thanks, ${esc(first)}. ${esc(R.owner || "We")} will text or call you to confirm your time.</p>
+      <p>Thanks, ${esc(first)}. ${esc(R.owner || "We")} will confirm your time by email at <b>${esc(d.email)}</b>.</p>
       <dl class="done__list">
         <div><dt>When</dt><dd>${esc(when)} · ${esc(d.time)}</dd></div>
         <div><dt>Vehicle</dt><dd>${esc(d.vehicle)}</dd></div>
         <div><dt>Service</dt><dd>${esc(d.service)}${d.insurance ? " · insurance claim" : ""}</dd></div>
+        ${sent ? `<div><dt>Photos</dt><dd>${sent} sent</dd></div>` : ""}
         ${ref ? `<div><dt>Reference</dt><dd><b>${esc(ref)}</b></dd></div>` : ""}
       </dl>
       <div class="done__btns">
         <a class="btn btn--accent" download="rev-auto-appointment.ics" href="${icsFor(d)}">📅 Add to my calendar</a>
-        ${RevContact.ready() ? `<a class="btn btn--wa" href="#wa" data-body="Hi Rev Auto, I just booked online${ref ? ` (ref ${esc(ref)})` : ""}. Here are photos of the damage:">💬 Send damage photos</a>` : ""}
         <button class="btn btn--ghost" type="button" id="bookAgain">Book another car</button>
       </div>
-      <p class="muted small">This is a request: your time is confirmed once we reach out.</p>`;
+      <p class="muted small">This is a request: your time is confirmed once you get our email.</p>`;
     form.hidden = true; done.hidden = false; done.focus();
     done.scrollIntoView({ behavior: "smooth", block: "center" });
-    $("#bookAgain").onclick = () => { done.hidden = true; form.hidden = false; form.reset(); msg.textContent = ""; form.name.focus(); };
+    $("#bookAgain").onclick = () => { done.hidden = true; form.hidden = false; form.reset(); photos.length = 0; drawPhotos(); msg.textContent = ""; form.name.focus(); };
   }
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const d = Object.fromEntries(new FormData(form));
     if (d.botcheck) return;
-    const missing = ["name", "phone", "vehicle", "service", "date", "time"].filter((k) => !String(d[k] || "").trim());
-    if (missing.length) { msg.className = "form__msg bad"; msg.textContent = "Please fill in your name, phone, vehicle, service, date and time."; form.querySelector(`[name=${missing[0]}]`).focus(); return; }
-    if (new Date(d.date + "T12:00").getDay() === 0) { msg.className = "form__msg bad"; msg.textContent = "We're closed on Sundays. Please pick another day."; return; }
-    if (new Date(d.date + "T12:00").getDay() === 6 && /Afternoon/.test(d.time)) { msg.className = "form__msg bad"; msg.textContent = "On Saturdays we're open 10 AM to 3 PM. Please pick morning or midday."; return; }
+    delete d.photo;
+    const missing = ["name", "phone", "email", "vehicle", "service", "date", "time"].filter((k) => !String(d[k] || "").trim());
+    const bad = (m, field) => { msg.className = "form__msg bad"; msg.textContent = m; if (field) form.querySelector(`[name=${field}]`).focus(); };
+    if (missing.length) return bad("Please fill in your name, phone, email, vehicle, service, date and time.", missing[0]);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email.trim())) return bad("Please check your email address: we send your confirmation there.", "email");
+    if (new Date(d.date + "T12:00").getDay() === 0) return bad("We're closed on Sundays. Please pick another day.", "date");
+    if (new Date(d.date + "T12:00").getDay() === 6 && /Afternoon/.test(d.time)) return bad("On Saturdays we're open 10 AM to 3 PM. Please pick morning or midday.", "time");
     const when = new Date(d.date + "T12:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
-    const summary = `New appointment request\n\nName: ${d.name}\nPhone: ${d.phone}\nEmail: ${d.email || "-"}\nVehicle: ${d.vehicle}\nService: ${d.service}${d.insurance ? " (insurance claim)" : ""}\nPreferred: ${when}, ${d.time}\n\nDetails:\n${d.details || "-"}`;
-    const btn = form.querySelector("button[type=submit]"); btn.disabled = true; msg.className = "form__msg"; msg.textContent = "Sending…";
-
-    const toSheet = RevTrack.booking({ name: d.name, phone: d.phone, email: d.email, vehicle: d.vehicle, service: d.service, insurance: !!d.insurance, date: d.date, time: d.time, details: d.details });
-    const toEmail = (async () => {
-      if (!R.web3formsKey) throw new Error("not set up");
-      const f = new FormData();
-      Object.entries({ access_key: R.web3formsKey, subject: `Appointment request: ${d.name} · ${d.vehicle} · ${when}`, from_name: "Rev Auto website", replyto: d.email || "", message: summary, botcheck: "" }).forEach(([k, v]) => f.append(k, v));
-      const r = await fetch("https://api.web3forms.com/submit", { method: "POST", body: f, headers: { Accept: "application/json" } });
-      const j = await r.json(); if (!j.success) throw new Error(j.message || "failed");
-    })();
-    const [sheet, mail] = await Promise.allSettled([toSheet, toEmail]);
-    btn.disabled = false;
-    if (sheet.status === "fulfilled" || mail.status === "fulfilled") {
+    const btn = form.querySelector("button[type=submit]"); btn.disabled = true; msg.className = "form__msg";
+    msg.textContent = photos.length ? `Sending your request and ${photos.length} photo${photos.length > 1 ? "s" : ""}…` : "Sending…";
+    try {
+      const r = await RevTrack.booking({ name: d.name, phone: d.phone, email: d.email.trim(), vehicle: d.vehicle, service: d.service, insurance: !!d.insurance,
+        date: d.date, time: d.time, details: d.details, photos: photos.map((data) => ({ data })) });
       msg.textContent = ""; RevTrack.event("book", d.service);
-      showDone(d, when, sheet.status === "fulfilled" ? sheet.value : "");
-    } else if (RevContact.ready()) {
-      msg.className = "form__msg ok"; msg.textContent = "Opening WhatsApp with your request. Just tap send.";
-      RevContact.whatsapp(summary.replace("New appointment request", "Hi Rev Auto, I'd like to book an appointment:"));
-    } else { msg.className = "form__msg bad"; msg.textContent = "Online booking is being set up. Please check back soon."; }
+      showDone(d, when, r.ref, r.photos || 0);
+    } catch (err) {
+      // the Sheet couldn't be reached: open the customer's email app with the request filled in
+      msg.className = "form__msg bad";
+      msg.textContent = err.message === "slow down" ? "Too many requests from this device. Please wait a bit, or email us." : "We couldn't send it online. Opening your email app with your request filled in: just tap send (and attach your photos).";
+      if (err.message !== "slow down") RevContact.email(`Appointment request: ${d.name} · ${d.vehicle} · ${when}`,
+        `Hi Rev Auto, I'd like to book an appointment:\n\nName: ${d.name}\nPhone: ${d.phone}\nVehicle: ${d.vehicle}\nService: ${d.service}${d.insurance ? " (insurance claim)" : ""}\nPreferred: ${when}, ${d.time}\n\nDetails:\n${d.details || "-"}`);
+    } finally { btn.disabled = false; }
   });
 })();

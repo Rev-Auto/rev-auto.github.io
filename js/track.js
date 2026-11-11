@@ -1,5 +1,5 @@
 // Anonymous, cookie-free activity for the private dashboard: one "visit" per browsing session, plus taps
-// (WhatsApp, Call, booking, chatbot). Sends nothing until config.js has a sheetsUrl.
+// (email, call, WhatsApp from the chatbot, booking, chatbot). Sends nothing until config.js has a sheetsUrl.
 // Devices that signed in to the dashboard are skipped, so the owner's own visits don't count.
 (function () {
   const url = (window.REV || {}).sheetsUrl;
@@ -29,7 +29,7 @@
     async booking(d) {
       if (!url) throw new Error("no sheet");
       const r = await fetch(url, { method: "POST", body: JSON.stringify({ kind: "booking", ...d, visitor, source }), headers: { "Content-Type": "text/plain" } });
-      const j = await r.json(); if (!j.ok) throw new Error(j.error || "failed"); return j.ref;
+      const j = await r.json(); if (!j.ok) throw new Error(j.error || "failed"); return j;
     },
   };
 

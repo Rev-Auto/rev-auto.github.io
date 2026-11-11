@@ -16,7 +16,7 @@
   <link rel="canonical" href="https://ftalla18.github.io/revauto/" />
   <script type="application/ld+json">
   {"@context": "https://schema.org", "@type": "AutoBodyShop", "name": "RevAuto", "legalName": "Q Concept Group Ventures DBA RevAuto",
-    "url": "https://ftalla18.github.io/revauto/", "image": "https://ftalla18.github.io/revauto/assets/img/og-revauto.png", "logo": "https://ftalla18.github.io/revauto/assets/img/logo-lux-light.png",
+    "url": "https://ftalla18.github.io/revauto/", "image": "https://ftalla18.github.io/revauto/assets/img/og-revauto.png", "logo": "https://ftalla18.github.io/revauto/assets/img/logo-luxe-light.png",
     "address": {"@type": "PostalAddress", "streetAddress": "2133 19th St", "addressLocality": "Sarasota", "addressRegion": "FL", "postalCode": "34234", "addressCountry": "US"},
     "openingHoursSpecification": [
       {"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "08:30", "closes": "17:30"},
@@ -27,7 +27,7 @@
   <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=202611081256" />
+  <link rel="stylesheet" href="css/styles.css?v=202611111257" />
   <script>
     // pick the theme before first paint (no flash): saved choice, or by time of day
     (function () {
@@ -43,9 +43,10 @@
 
   <header class="top">
     <div class="wrap top__in">
-      <a class="brand" href="#top" aria-label="Rev Auto home"><img class="brand__logo brand__logo--light" src="assets/img/logo-lux-light-word.png" alt="Rev Auto · Lux Paint & Repair" width="436" height="211" /><img class="brand__logo brand__logo--dark" src="assets/img/logo-lux-dark-word.png" alt="Rev Auto · Lux Paint & Repair" width="436" height="211" /></a>
+      <a class="brand" href="#top" aria-label="Rev Auto home"><img class="brand__logo brand__logo--light" src="assets/img/logo-luxe-light-word.png" alt="Rev Auto · Luxe Paint & Repair" width="436" height="211" /><img class="brand__logo brand__logo--dark" src="assets/img/logo-luxe-dark-word.png" alt="Rev Auto · Luxe Paint & Repair" width="436" height="211" /></a>
+      <button class="burger" id="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="nav"><i></i><i></i><i></i></button>
       <nav class="nav" id="nav">
-        <a href="#services">Services</a><a href="#difference">Why us</a><a href="#work">Our work</a><a href="#faq">FAQ</a><a href="#visit">Visit</a>
+        <a href="#services" data-c="sections.services.nav">Services</a><a href="#difference" data-c="sections.difference.nav">Why us</a><a href="#work" data-c="sections.work.nav">Our work</a><a href="#faq" data-c="sections.faq.nav">FAQ</a><a href="#visit" data-c="sections.visit.nav">Visit</a>
       </nav>
       <div class="social social--top"><a data-social="ig" target="_blank" rel="noopener" aria-label="RevAuto on Instagram" title="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a><a data-social="fb" target="_blank" rel="noopener" aria-label="RevAuto on Facebook" title="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7.5h2.5l.4-3h-2.9V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H8v3h2.5V21z"/></svg></a></div>
       <a class="btn btn--accent btn--sm top__cta" href="#book">Book</a>
@@ -56,51 +57,54 @@
     <section class="hero">
       <div class="hero__media" aria-hidden="true"><img src="assets/media/range-rover-sport.jpg" alt="" /></div>
       <div class="wrap hero__in">
-        <div class="hero__logo"><img class="hero__img hero__img--light" src="assets/img/logo-lux-light.png" alt="Rev Auto · Lux Paint & Repair" width="499" height="359" /><img class="hero__img hero__img--dark" src="assets/img/logo-lux-dark.png" alt="Rev Auto · Lux Paint & Repair" width="499" height="359" /></div>
-        <p class="eyebrow">Family&#8209;owned · Sarasota,&nbsp;FL · Insurance · Walk&#8209;ins · Custom&nbsp;work</p>
-        <h1>Value first.<br /><span class="accent">Your satisfaction, always.</span></h1>
-        <p class="lead">We take pride in every repair and meet you where you are: walk in or book online, insurance or out of pocket, everyday car or exotic. Honest estimates, honest work, and a little extra value on every job.</p>
+        <div class="hero__logo"><img class="hero__img hero__img--light" src="assets/img/logo-luxe-light.png" alt="Rev Auto · Luxe Paint & Repair" width="499" height="359" /><img class="hero__img hero__img--dark" src="assets/img/logo-luxe-dark.png" alt="Rev Auto · Luxe Paint & Repair" width="499" height="359" /></div>
+        <p class="eyebrow" data-c="hero.eyebrow">Family‑owned · Sarasota, FL · Insurance · Walk‑ins · Custom work</p>
+        <h1><span data-c="hero.title">Value first.</span><br /><span class="accent" data-c="hero.accent">Your satisfaction, always.</span></h1>
+        <p class="lead" data-c="hero.lead">We take pride in every repair and meet you where you are: walk in or book online, insurance or out of pocket, everyday car or exotic. Honest estimates, honest work, and a little extra value on every job.</p>
         <div class="hero__ctas">
           <a class="btn btn--accent btn--lg" href="#book">Book an appointment</a>
-          <a class="btn btn--ghost btn--lg" href="#contact" data-contact="wa" data-body="Hi Rev Auto, I'd like an estimate. I can send photos of the damage.">💬 Send photos on WhatsApp</a>
+          <a class="btn btn--ghost btn--lg" href="#email" data-contact="email" data-subject="Estimate request" data-body="Hi Rev Auto, I'd like an estimate. I'm attaching photos of the damage.">✉️ Email us photos</a>
         </div>
-        <ul class="hero__facts"><li><b>10+</b><span>years of experience</span></li><li><b>Free</b><span>estimates</span></li><li><b>Honest</b><span>advice, no upselling</span></li><li><b>Lifetime</b><span>labor warranty</span></li></ul>
+        <ul class="hero__facts" id="heroFacts"><li><b>10+</b><span>years of experience</span></li><li><b>Free</b><span>estimates</span></li><li><b>Honest</b><span>advice, no upselling</span></li><li><b>Lifetime</b><span>labor warranty</span></li></ul>
       </div>
     </section>
 
     <section class="section" id="difference">
       <div class="wrap">
-        <p class="kicker">The Rev Auto difference</p>
-        <h2>Most shops fix the damage. We take care of the car.</h2>
+        <p class="kicker" data-c="sections.difference.kicker">The Rev Auto difference</p>
+        <h2 data-c="sections.difference.title">Most shops fix the damage. We take care of the car.</h2>
+        <p class="muted section__text" data-c="sections.difference.text" hidden></p>
         <div class="meet">
-          <img src="assets/img/mr-uriel.png" alt="Mr. Uriel's cartoon persona" width="360" height="360" loading="lazy" />
+          <img id="ownerImg" src="assets/img/mr-uriel.png" alt="Mr. Uriel's cartoon persona" width="360" height="360" loading="lazy" />
           <div>
-            <p class="kicker">Meet the owner</p>
-            <h3>Mr. Uriel</h3>
-            <p>10+ years repairing everything from a '69 Porsche 912 to a Ram TRX. Known for honest advice, fair estimates, and treating every car like his own. That's his cartoon twin in our videos.</p>
+            <p class="kicker" data-c="owner.kicker">Meet the owner</p>
+            <h3 data-c="owner.name">Mr. Uriel</h3>
+            <p data-c="owner.text">10+ years repairing everything from a '69 Porsche 912 to a Ram TRX. Known for honest advice, fair estimates, and treating every car like his own. That's his cartoon twin in our videos.</p>
             <a class="btn btn--ghost btn--sm" data-social="ig" target="_blank" rel="noopener">See his work on Instagram ↗</a>
           </div>
         </div>
-        <div class="grid grid--4" id="diffGrid"></div>
+        <div class="grid grid--4" id="diffGrid" data-balance="250"></div>
       </div>
     </section>
 
     <section class="section section--alt" id="services">
       <div class="wrap">
-        <p class="kicker">Services</p>
-        <h2>Bodywork is our specialty. Cars are our whole world.</h2>
-        <div class="grid grid--3" id="svcGrid"></div>
+        <p class="kicker" data-c="sections.services.kicker">Services</p>
+        <h2 data-c="sections.services.title">Bodywork is our specialty. Cars are our whole world.</h2>
+        <p class="muted section__text" data-c="sections.services.text" hidden></p>
+        <div class="grid grid--3" id="svcGrid" data-balance="280"></div>
       </div>
     </section>
 
     <section class="section" id="work">
       <div class="wrap">
-        <p class="kicker">Our work</p>
-        <h2>Before, after, and everything in between.</h2>
+        <p class="kicker" data-c="sections.work.kicker">Our work</p>
+        <h2 data-c="sections.work.title">Before, after, and everything in between.</h2>
+        <p class="muted section__text" data-c="sections.work.text" hidden></p>
         <div class="gallery" id="gallery"></div>
         <div class="reels">
           <div class="reels__head">
-            <div><p class="kicker">From the shop floor</p><h3>Watch the work happen</h3></div>
+            <div><p class="kicker" data-c="sections.reels.kicker">From the shop floor</p><h3 data-c="sections.reels.title">Watch the work happen</h3></div>
             <div class="reels__nav"><button type="button" data-dir="-1" aria-label="Previous videos">‹</button><button type="button" data-dir="1" aria-label="Next videos">›</button></div>
           </div>
           <div class="reels__track" id="reels" tabindex="0" aria-label="Short videos from the shop"></div>
@@ -112,10 +116,10 @@
 
     <section class="section section--alt" id="how">
       <div class="wrap">
-        <p class="kicker">How it works</p>
-        <h2>Three steps back to the road.</h2>
-        <ol class="steps">
-          <li><b>Book or send photos</b><span>Pick a time online, or send photos of the damage on WhatsApp.</span></li>
+        <p class="kicker" data-c="sections.how.kicker">How it works</p>
+        <h2 data-c="sections.how.title">Three steps back to the road.</h2>
+        <ol class="steps" id="howSteps" data-balance="260">
+          <li><b>Book or send photos</b><span>Pick a time online and add photos of the damage to your request.</span></li>
           <li><b>Get an honest estimate</b><span>Free. We inspect the car and tell you honestly what it needs, and what it doesn't.</span></li>
           <li><b>Pick it up, done right</b><span>Your car comes back fixed right, and our labor is warrantied for as long as you own it.</span></li>
         </ol>
@@ -125,21 +129,26 @@
     <section class="section" id="book">
       <div class="wrap book">
         <div>
-          <p class="kicker">Book online</p>
-          <h2>Request an appointment.</h2>
-          <p class="muted">Tell us about your car and pick a time that works. We'll confirm by text or call. Photos of the damage help a lot: send them on WhatsApp after you book.</p>
-          <div class="cbtns"><a class="btn btn--wa" href="#contact" data-contact="wa">💬 WhatsApp</a><a class="btn btn--ghost" href="#contact" data-contact="call">📞 Call</a></div>
+          <p class="kicker" data-c="sections.book.kicker">Book online</p>
+          <h2 data-c="sections.book.title">Request an appointment.</h2>
+          <p class="muted" data-c="sections.book.text">Tell us about your car, add a few photos of the damage, and pick a time that works. We'll confirm by email.</p>
+          <div class="cbtns"><a class="btn btn--ghost" href="#email" data-contact="email">✉️ Email us</a><a class="btn btn--ghost" href="#call" data-contact="call">📞 Call</a></div>
         </div>
         <form class="card form" id="bookForm" novalidate>
           <div class="fields">
             <label>Full name<input name="name" required autocomplete="name" /></label>
             <label>Phone<input name="phone" type="tel" required autocomplete="tel" /></label>
-            <label class="full">Email (optional)<input name="email" type="email" autocomplete="email" /></label>
+            <label class="full">Email (we send your confirmation here)<input name="email" type="email" required autocomplete="email" inputmode="email" /></label>
             <label>Vehicle (year, make, model)<input name="vehicle" required placeholder="2019 Honda Accord" /></label>
             <label>Service<select name="service" id="svcSelect" required></select></label>
             <label>Preferred date<input name="date" type="date" required /></label>
             <label>Preferred time<select name="time" required><option value="">Choose…</option><option>Morning (8:30–11 AM)</option><option>Midday (11 AM–2 PM)</option><option>Afternoon (2–5:30 PM)</option></select></label>
             <label class="full">What happened? (the damage, any extra scratches you'd like us to look at)<textarea name="details" rows="4"></textarea></label>
+            <div class="full photos">
+              <div class="photos__head"><span>Photos of the damage <small class="muted">(optional, they help a lot)</small></span><small class="muted" id="photoCount">Up to 5 photos</small></div>
+              <div class="photos__list"><div id="photoList" class="photos__grid"></div>
+                <label class="photos__add" id="photoAdd"><input id="photoInput" name="photo" type="file" accept="image/*" multiple /><span aria-hidden="true">＋</span><small>Add photos</small></label></div>
+            </div>
             <label class="check full"><input type="checkbox" name="insurance" /> <span>This is an insurance claim</span></label>
           </div>
           <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" />
@@ -152,7 +161,7 @@
 
     <section class="section section--alt" id="faq">
       <div class="wrap faq">
-        <div><p class="kicker">FAQ</p><h2>Good questions.</h2><p class="muted">Ask our assistant anything about the shop, or message us directly.</p><button class="btn btn--ghost" type="button" data-open-chat>Ask the assistant</button></div>
+        <div><p class="kicker" data-c="sections.faq.kicker">FAQ</p><h2 data-c="sections.faq.title">Good questions.</h2><p class="muted" data-c="sections.faq.text">Ask our assistant anything about the shop, or email us directly.</p><button class="btn btn--ghost" type="button" data-open-chat>Ask the assistant</button></div>
         <div id="faqList"></div>
       </div>
     </section>
@@ -160,11 +169,11 @@
     <section class="section" id="visit">
       <div class="wrap visit">
         <div>
-          <p class="kicker">Visit</p>
-          <h2>Come see the shop.</h2>
+          <p class="kicker" data-c="sections.visit.kicker">Visit</p>
+          <h2 data-c="sections.visit.title">Come see the shop.</h2>
           <p class="addr" id="addr"></p>
           <table class="hours" id="hours"></table>
-          <div class="cbtns" id="contact"><a class="btn btn--wa" href="#contact" data-contact="wa">💬 WhatsApp us</a><a class="btn btn--ghost" href="#contact" data-contact="call">📞 Call us</a><a class="btn btn--ghost" id="mapsLink" target="_blank" rel="noopener">Directions ↗</a></div>
+          <div class="cbtns" id="contact"><a class="btn btn--accent" href="#email" data-contact="email">✉️ Email us</a><a class="btn btn--ghost" href="#call" data-contact="call">📞 Call us</a><a class="btn btn--ghost" id="mapsLink" target="_blank" rel="noopener">Directions ↗</a></div>
         </div>
         <iframe class="map" id="map" title="Map to Rev Auto" loading="lazy"></iframe>
       </div>
@@ -173,7 +182,7 @@
 
   <footer class="foot">
     <div class="wrap foot__in">
-      <a class="brand brand--foot" href="#top"><img class="brand__logo brand__logo--light" src="assets/img/logo-lux-light.png" alt="Rev Auto · Lux Paint & Repair" width="499" height="359" /><img class="brand__logo brand__logo--dark" src="assets/img/logo-lux-dark.png" alt="Rev Auto · Lux Paint & Repair" width="499" height="359" /></a>
+      <a class="brand brand--foot" href="#top"><img class="brand__logo brand__logo--light" src="assets/img/logo-luxe-light.png" alt="Rev Auto · Luxe Paint & Repair" width="499" height="359" /><img class="brand__logo brand__logo--dark" src="assets/img/logo-luxe-dark.png" alt="Rev Auto · Luxe Paint & Repair" width="499" height="359" /></a>
       <p class="muted small">Family-owned collision & body repair · <span id="footAddr"></span></p>
       <div class="social"><a data-social="ig" target="_blank" rel="noopener" aria-label="RevAuto on Instagram" title="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a><a data-social="fb" target="_blank" rel="noopener" aria-label="RevAuto on Facebook" title="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7.5h2.5l.4-3h-2.9V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H8v3h2.5V21z"/></svg></a></div>
       <p class="muted small">Q Concept Group Ventures DBA RevAuto · FL Motor Vehicle Repair Reg. MV150669</p>
@@ -194,10 +203,11 @@
   <div id="assistant"></div>
   <div class="toast" id="toast" role="status"></div>
 
-  <script src="js/config.js?v=202611081256"></script>
-  <script src="js/track.js?v=202611081256"></script>
-  <script src="js/kb.js?v=202611081256"></script>
-  <script src="js/main.js?v=202611081256"></script>
-  <script src="js/bot.js?v=202611081256"></script>
+  <script src="js/config.js?v=202611111257"></script>
+  <script src="js/track.js?v=202611111257"></script>
+  <script src="js/kb.js?v=202611111257"></script>
+  <script src="js/content.js?v=202611111257"></script>
+  <script src="js/main.js?v=202611111257"></script>
+  <script src="js/bot.js?v=202611111257"></script>
 </body>
 </html>

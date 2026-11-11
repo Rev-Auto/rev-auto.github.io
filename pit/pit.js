@@ -66,6 +66,16 @@
   document.querySelectorAll("#apptFilter button").forEach((b) => (b.onclick = () => { S.filter = b.dataset.f; renderAppts(); }));
   $("#apptSearch").oninput = (e) => { S.q = e.target.value.toLowerCase(); renderAppts(); };
   $("#onlyMissed").onchange = renderChat;
+  window.RevPit = { api, toast };
+
+  // ---------- Bookings & stats | Website
+  document.querySelectorAll("#views button").forEach((b) => (b.onclick = () => {
+    const site = b.dataset.view === "site";
+    document.querySelectorAll("#views button").forEach((x) => { x.classList.toggle("on", x === b); x.setAttribute("aria-selected", x === b); });
+    $("#viewShop").hidden = site; $("#viewSite").hidden = !site; $("#shopTools").hidden = site;
+    if (site) window.RevEditor.open(); else if (lastDaily) renderLine(lastDaily);
+    scrollTo(0, 0);
+  }));
 
   // ---------- helpers
   const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
@@ -99,8 +109,9 @@
       { label: "Booking requests", value: n(st.bookings.cur), note: delta(st.bookings.cur, st.bookings.prev) },
       { label: "Visitors", value: n(st.cur.visitors), note: delta(st.cur.visitors, st.prev.visitors) },
       { label: "Booking rate", value: rate + "%", note: "of visitors sent a request" },
-      { label: "WhatsApp taps", value: n(st.cur.taps.wa), note: `${n(st.cur.taps.call)} call taps` },
-      { label: "Chatbot questions", value: n(chats), note: `${n(st.cur.taps.chat_miss)} handed to WhatsApp` },
+      { label: "Confirmed", value: n(st.bookings.confirmed || 0), note: `${n(st.bookings.photos || 0)} requests came with photos` },
+      { label: "Email & call taps", value: n((st.cur.taps.email || 0) + (st.cur.taps.call || 0)), note: `${n(st.cur.taps.email)} email · ${n(st.cur.taps.call)} call` },
+      { label: "Chatbot questions", value: n(chats), note: `${n(st.cur.taps.chat_miss)} handed to the owner` },
     ];
     $("#tiles").innerHTML = tiles.map((t) => `<div class="tile ${t.cls || ""}" ${t.id ? `id="${t.id}" role="button" tabindex="0"` : ""}><div class="tile__label">${t.label}</div><div class="tile__value">${t.value}</div><div class="tile__note">${t.note}</div></div>`).join("");
     const go = () => { S.filter = "new"; renderAppts(); $("#appointments").scrollIntoView({ behavior: "smooth" }); };
@@ -124,14 +135,43 @@
           <div class="appt__meta"><b>${esc(b.vehicle)}</b> · ${esc(b.service)} · ${esc(b.time)}</div>
           <div class="appt__meta">${esc(b.phone)}${b.email ? " · " + esc(b.email) : ""}</div>
           ${b.details ? `<p class="appt__details">${esc(b.details)}</p>` : ""}
+          ${b.confirmed ? `<div class="appt__ok">✓ Confirmed ${esc(b.confirmed)}</div>` : ""}
+          ${b.photos ? `<button type="button" class="btn btn--ghost appt__photosbtn" data-photos="${esc(b.ref)}">📷 ${b.photos} photo${b.photos > 1 ? "s" : ""}</button><div class="appt__photos" id="ph-${esc(b.ref)}" hidden></div>` : ""}
           <div class="appt__ref">${esc(b.ref)} · received ${esc(b.received.replace("T", " "))}${b.source ? " · via " + esc(SRC[b.source] || b.source) : ""}</div>
         </div>
         <div class="appt__actions">
+          ${b.status === "New" ? `<button type="button" class="btn btn--gold" data-approve="${esc(b.ref)}">✓ Approve${b.email ? " &amp; email" : ""}</button>` : ""}
           <select aria-label="Status for ${esc(b.name)}">${["New", "Confirmed", "Done", "Cancelled", "No-show"].map((s) => `<option${s === b.status ? " selected" : ""}>${s}</option>`).join("")}</select>
-          <a class="btn btn--wa" target="_blank" rel="noopener" href="${waLink(b)}">💬 Confirm on WhatsApp</a>
+          ${b.email ? `<a class="btn btn--ghost" href="${mailLink(b)}">✉️ Email</a>` : ""}
           <a class="btn btn--ghost" href="tel:${esc(b.phone.replace(/[^\d+]/g, ""))}">📞 Call</a>
         </div></article>`;
     }).join("");
+    document.querySelectorAll("[data-approve]").forEach((btn) => (btn.onclick = async () => {
+      const ref = btn.dataset.approve, b = S.data.bookings.find((x) => x.ref === ref);
+      const note = b.email ? prompt(`Confirm ${b.name} for ${day(b.date, { weekday: "long", month: "long", day: "numeric" })} (${b.time})?\n\nOptional note for the email (or leave empty):`, "") : (confirm(`Mark ${b.name} confirmed? (No email on the request: call them.)`) ? "" : null);
+      if (note === null) return;
+      btn.disabled = true; btn.textContent = "Confirming…";
+      try {
+        const j = await api({ action: "approve", ref, message: note });
+        if (!j.ok) throw 0;
+        b.status = "Confirmed"; b.confirmed = "just now" + (j.emailed ? " · emailed" : "");
+        toast(j.emailed ? `Confirmed ✓ ${b.name} got the confirmation email.` : `Confirmed ✓ ${b.name} has no email: give them a call.`);
+      } catch { toast("Couldn't confirm. Try again."); }
+      renderTiles(S.data.stats, S.data.bookings); renderAppts();
+    }));
+    document.querySelectorAll("[data-photos]").forEach((btn) => (btn.onclick = async () => {
+      const box = document.getElementById("ph-" + btn.dataset.photos);
+      if (!box.hidden) { box.hidden = true; return; }
+      box.hidden = false;
+      if (box.dataset.loaded) return;
+      box.innerHTML = `<p class="empty">Loading photos…</p>`;
+      try {
+        const j = await api({ action: "photos", ref: btn.dataset.photos });
+        if (!j.ok) throw 0;
+        box.dataset.loaded = "1";
+        box.innerHTML = j.photos.map((p) => `<a href="${p.data}" target="_blank" rel="noopener" title="Open full size"><img src="${p.data}" alt="${esc(p.name)}" /></a>`).join("") || `<p class="empty">No photos found.</p>`;
+      } catch { box.innerHTML = `<p class="empty">Couldn't load the photos.</p>`; }
+    }));
     document.querySelectorAll(".appt select").forEach((sel) => (sel.onchange = async () => {
       const ref = sel.closest(".appt").dataset.ref, status = sel.value, b = S.data.bookings.find((x) => x.ref === ref), was = b.status;
       b.status = status; sel.disabled = true;
@@ -140,11 +180,9 @@
       renderTiles(S.data.stats, S.data.bookings); renderAppts();
     }));
   }
-  function waLink(b) {
-    let d = b.phone.replace(/\D/g, ""); if (d.length === 10) d = "1" + d;
-    const when = `${day(b.date, { weekday: "long", month: "long", day: "numeric" })} (${b.time})`;
-    const first = b.name.trim().split(/\s+/)[0];
-    return `https://wa.me/${d}?text=${encodeURIComponent(`Hi ${first}, this is Rev Auto. Your appointment for your ${b.vehicle} on ${when} is confirmed. Reply here if anything changes. See you then!`)}`;
+  function mailLink(b) {
+    const when = `${day(b.date, { weekday: "long", month: "long", day: "numeric" })} (${b.time})`, first = b.name.trim().split(/\s+/)[0];
+    return `mailto:${encodeURIComponent(b.email)}?subject=${encodeURIComponent(`Your Rev Auto appointment · ${b.vehicle}`)}&body=${encodeURIComponent(`Hi ${first},\n\nAbout your ${b.vehicle} appointment on ${when} (ref ${b.ref}):\n\n\n— Rev Auto`)}`;
   }
 
   // line chart: one series (visitors), crosshair + tooltip, hairline grid
@@ -202,12 +240,12 @@
     bars($("#services"), st.bookings.byService);
     $("#svcSub").textContent = `${n(st.bookings.cur)} requests · ${n(st.bookings.insurance)} insurance claims`;
     const tp = st.cur.taps;
-    bars($("#taps"), { "WhatsApp": tp.wa, "Call": tp.call, "Booking form": tp.book, "Chatbot opened": tp.chat_open, "Directions": tp.directions, "Instagram": tp.ig, "Facebook": tp.fb });
+    bars($("#taps"), { "Email": tp.email, "Call": tp.call, "Booking form": tp.book, "Chatbot opened": tp.chat_open, "Directions": tp.directions, "Instagram": tp.ig, "Facebook": tp.fb, "WhatsApp (chatbot)": tp.wa });
   }
 
   function renderChat() {
     const only = $("#onlyMissed").checked, list = S.data.stats.chat.filter((c) => !only || !c.answered);
-    $("#qs").innerHTML = list.length ? list.map((c) => `<li><q>${esc(c.q)}</q>${c.answered ? `<span class="chip" data-s="Confirmed"><i aria-hidden="true">✓</i>Answered</span>` :`<span class="chip" data-s="No-show"><i aria-hidden="true">↗</i>Sent to WhatsApp</span>`}<time>${esc(c.at.replace("T", " "))}</time></li>`).join("")
+    $("#qs").innerHTML = list.length ? list.map((c) => `<li><q>${esc(c.q)}</q>${c.answered ? `<span class="chip" data-s="Confirmed"><i aria-hidden="true">✓</i>Answered</span>` :`<span class="chip" data-s="No-show"><i aria-hidden="true">↗</i>Sent to the owner</span>`}<time>${esc(c.at.replace("T", " "))}</time></li>`).join("")
       : `<p class="empty">${only ? "The chatbot answered everything. ✓" : "No chatbot questions in this period."}</p>`;
   }
 
@@ -223,6 +261,10 @@
   function demoApi(body) {
     if (!demoStore) demoStore = makeDemo();
     if (body.action === "status") { return { ok: true }; }
+    if (body.action === "approve") return { ok: true, emailed: true };
+    if (body.action === "photos") return { ok: true, photos: [] };
+    if (body.action === "content_get") return { ok: true, content: null, history: [] };
+    if (body.action === "content_save") return { ok: true, history: [new Date().toISOString().slice(0, 16)] };
     return { ok: true, sheetUrl: "", days: S.days, bookings: demoStore.bookings, stats: demoStats(S.days) };
   }
   function rnd(seed) { return () => ((seed = (seed * 16807) % 2147483647) / 2147483647); }
@@ -238,7 +280,7 @@
       const k = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
       const status = dt > new Date() ? (r() < .55 ? "New" : "Confirmed") : st[Math.floor(r() * st.length)];
       bookings.push({ ref: "RA-" + k(rec).slice(5).replace("-", "") + "-" + Math.floor(r() * 9000 + 1000), received: k(rec) + "T" + String(8 + Math.floor(r() * 9)).padStart(2, "0") + ":" + String(Math.floor(r() * 60)).padStart(2, "0"),
-        name: names[i % names.length], phone: "(941) 555-01" + String(10 + i), email: "", vehicle: cars[Math.floor(r() * cars.length)], service: svcs[Math.floor(r() * svcs.length)],
+        name: names[i % names.length], phone: "(941) 555-01" + String(10 + i), email: i % 3 ? "sample" + i + "@example.com" : "", photos: i % 4 === 0 ? 2 : 0, confirmed: "", vehicle: cars[Math.floor(r() * cars.length)], service: svcs[Math.floor(r() * svcs.length)],
         insurance: r() < .4, date: k(dt), time: slots[Math.floor(r() * 3)], details: r() < .5 ? "Rear bumper scraped in a parking lot, small dent above the wheel." : "", status, notes: "", source: ["google", "instagram", "direct", "qr", "facebook"][Math.floor(r() * 5)] });
     }
     bookings.sort((a, b) => b.received.localeCompare(a.received));
@@ -250,11 +292,12 @@
     const visitors = daily.reduce((a, d) => a + d.visitors, 0), f = days / 30;
     const inRange = demoStore.bookings.filter((b) => b.received.slice(0, 10) >= daily[0].day);
     const byService = {}; inRange.forEach((b) => (byService[b.service] = (byService[b.service] || 0) + 1));
-    return { cur: { visits: Math.round(visitors * 1.25), visitors, taps: { wa: Math.round(41 * f), call: Math.round(17 * f), book: inRange.length, chat_open: Math.round(52 * f), chat_q: Math.round(88 * f), chat_miss: Math.round(9 * f), directions: Math.round(23 * f), ig: Math.round(31 * f), fb: Math.round(8 * f) } },
+    return { cur: { visits: Math.round(visitors * 1.25), visitors, taps: { email: Math.round(36 * f), wa: Math.round(6 * f), call: Math.round(17 * f), book: inRange.length, chat_open: Math.round(52 * f), chat_q: Math.round(88 * f), chat_miss: Math.round(9 * f), directions: Math.round(23 * f), ig: Math.round(31 * f), fb: Math.round(8 * f) } },
       prev: { visits: Math.round(visitors * 1.05), visitors: Math.round(visitors * .84), taps: {} }, daily,
       sources: { google: Math.round(visitors * .41), instagram: Math.round(visitors * .24), direct: Math.round(visitors * .17), qr: Math.round(visitors * .09), facebook: Math.round(visitors * .06), whatsapp: Math.round(visitors * .03) },
       devices: { phone: Math.round(visitors * .71), desktop: Math.round(visitors * .24), tablet: Math.round(visitors * .05) },
-      bookings: { cur: inRange.length, prev: Math.round(inRange.length * .8), byService, insurance: inRange.filter((b) => b.insurance).length },
+      bookings: { cur: inRange.length, prev: Math.round(inRange.length * .8), byService, insurance: inRange.filter((b) => b.insurance).length,
+        confirmed: inRange.filter((b) => b.status === "Confirmed" || b.status === "Done").length, photos: inRange.filter((b) => b.photos).length },
       chat: [["do you work with geico", 1], ["how much to fix a bumper", 1], ["do you do window tint", 0], ["are you open saturday", 1], ["can you fix a cracked windshield", 0], ["who's the owner? can I meet him tomorrow", 1], ["do you have loaner cars", 0], ["do you work on teslas", 1]].map(([q, a], i) => ({ at: k(new Date(Date.now() - i * 1.7 * 864e5)) + "T1" + i + ":2" + i, q, answered: !!a })) };
   }
 
