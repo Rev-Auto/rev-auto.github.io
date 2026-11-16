@@ -5,11 +5,14 @@
  *  - records anonymous site activity to the "Events" tab (visits, email/call taps, chatbot questions)
  *  - stores the website's editable content (Website tab of the dashboard) in the "Content" tab, with history
  *  - serves the private dashboard (website /pit/), only with the admin passcode
+ *  - pulls the newest reels from @revautosrq every hour (Instagram API) for the "From the shop floor" strip;
+ *    if Instagram is off or stops answering, the website shows its built-in videos instead
  *
  * Script properties (Project Settings > Script properties):
  *   ADMIN_KEY      dashboard passcode (required)
  *   SHOP_EMAIL     where booking emails go (default revautosrq@gmail.com)
  *   SITE_URL       the website (default https://rev-auto.github.io/)
+ *   IG_TOKEN       Instagram access token (optional; see HANDOVER.md step 5). Renewed automatically every week.
  * Setup steps: see SETUP.md next to this file.
  */
 
@@ -18,7 +21,12 @@ const TABS = {
   Events: ["Time", "Type", "Detail", "Visitor", "Session", "Source", "Referrer", "Device", "Page"],
   Content: ["Website content (managed by the dashboard: please don't edit by hand)"],
   ContentHistory: ["Saved", "Content"],
+  Instagram: ["Id", "Posted", "Caption", "Link", "Thumbnail", "Video", "Checked"],
 };
+const IG_SHOW = 12;                     // newest visible reels shown on the website
+const IG_KEEP = 30;                     // reels kept in the Instagram tab (the dashboard lists these)
+const IG_STALE_HOURS = 26;              // no good sync for this long -> the website falls back to its own videos
+const IG_CDN = /^https:\/\/[\w.-]+\.(cdninstagram\.com|fbcdn\.net)\/[^\s"'<>()\\]+$/;
 const STATUSES = ["New", "Confirmed", "Done", "Cancelled", "No-show"];
 const EVENT_TYPES = ["visit", "wa", "call", "email", "book", "chat_open", "chat_q", "chat_miss", "ig", "fb", "directions"];
 const COL = { ref: 1, received: 2, name: 3, email: 5, status: 12, notes: 13, photos: 15, confirmed: 16 };
@@ -44,11 +52,14 @@ function setup() {
     SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo(v).setBackground(c).setRanges([b.getRange(2, COL.status, 1000, 1)]).build());
   b.setConditionalFormatRules(rules);
   [130, 150, 150, 120, 180, 170, 170, 110, 110, 150, 320, 100, 220, 90, 220, 170].forEach((w, i) => b.setColumnWidth(i + 1, w));
-  ["Content", "ContentHistory"].forEach((n) => ss.getSheetByName(n).hideSheet());
+  ["Content", "ContentHistory", "Instagram"].forEach((n) => ss.getSheetByName(n).hideSheet());
   const first = ss.getSheetByName("Sheet1"); if (first && first.getLastRow() === 0 && ss.getSheets().length > 2) ss.deleteSheet(first);
   photoFolder(); mediaFolder();                                   // creates the Drive folders (and asks for Drive permission)
   if (!prop("APPROVE_SECRET")) PropertiesService.getScriptProperties().setProperty("APPROVE_SECRET", Utilities.getUuid() + Utilities.getUuid());
   if (!prop("ADMIN_KEY")) Logger.log("Now add ADMIN_KEY in Project Settings > Script properties.");
+  installTriggers();
+  if (prop("IG_TOKEN")) { const r = syncInstagram(); Logger.log(r.ok ? "Instagram: " + r.count + " reels found." : "Instagram: " + r.error); }
+  else Logger.log("Instagram not connected (optional): add IG_TOKEN, then run setup again. See HANDOVER.md step 5.");
   Logger.log("Setup done. Booking emails go to " + SHOP_EMAIL() + ". Email quota left today: " + MailApp.getRemainingDailyQuota());
 }
 
@@ -230,8 +241,13 @@ function admin(d) {
   if (d.action === "status") return setStatus(d.ref, d.status, d.notes);
   if (d.action === "approve") return approve(d.ref, clean(d.message, 600), "dashboard");
   if (d.action === "photos") return bookingPhotos(d.ref);
-  if (d.action === "content_get") return { ok: true, content: readContent(), history: history() };
+  if (d.action === "content_get") return { ok: true, content: readContent(), history: history(), instagram: igStatus() };
   if (d.action === "content_save") return saveContent(d.content);
+  if (d.action === "ig_sync") {
+    if (!allow("igsync", 12, 3600)) return { ok: false, error: "slow down" };
+    const r = syncInstagram();
+    return { ok: true, synced: r.ok, error: r.error || "", instagram: igStatus() };
+  }
   if (d.action === "content_restore") return restoreContent(d.at);
   if (d.action === "media_upload") return uploadMedia(d.data, d.name);
   const days = [7, 30, 90, 365].indexOf(Number(d.days)) >= 0 ? Number(d.days) : 30;
@@ -314,7 +330,8 @@ function readContent() {
 function publicContent() {
   const cache = CacheService.getScriptCache(), hit = cache.get("content");
   if (hit) return JSON.parse(hit);
-  const out = { ok: true, content: readContent(), updated: prop("CONTENT_UPDATED") };
+  const content = readContent();
+  const out = { ok: true, content, updated: prop("CONTENT_UPDATED"), instagram: publicReels(content) };
   const s = JSON.stringify(out); if (s.length < 95000) cache.put("content", s, 600);
   return out;
 }
@@ -384,13 +401,146 @@ function sanitizeContent(c) {
       difference: Object.assign(head(S.difference), { items: tiles(S.difference, 12) }),
       services: Object.assign(head(S.services), { items: tiles(S.services, 18) }),
       work: Object.assign(head(S.work), { items: list(S.work && S.work.items, 48, (m) => (media(m.src) ? { src: media(m.src), poster: media(m.poster), caption: s(m.caption, 120), alt: s(m.alt, 160) } : null)) }),
-      reels: Object.assign(head(S.reels), { items: list(S.reels && S.reels.items, 40, (m) => (reel(m.src) ? { src: reel(m.src), caption: s(m.caption, 140) } : null)) }),
+      reels: Object.assign(head(S.reels), { items: list(S.reels && S.reels.items, 40, (m) => (reel(m.src) ? { src: reel(m.src), caption: s(m.caption, 140) } : null)),
+        source: S.reels && S.reels.source === "default" ? "default" : "instagram",
+        hidden: list(S.reels && S.reels.hidden, 200, (id) => (/^\d{5,30}$/.test(String(id)) ? String(id) : null)) }),
       how: Object.assign(head(S.how), { items: tiles(S.how, 6) }),
       book: head(S.book),
       faq: Object.assign(head(S.faq), { items: list(S.faq && S.faq.items, 40, (f) => (s(f.q, 160) ? { q: s(f.q, 160), a: s(f.a, 800) } : null)) }),
       visit: head(S.visit),
     },
   };
+}
+
+// ---------- Instagram reels ("From the shop floor")
+// Every hour: ask Instagram for @revautosrq's latest posts, keep the reels in the hidden "Instagram" tab.
+// Instagram's video links expire after a while, so each check also stores fresh ones.
+// The website shows the newest IG_SHOW reels the owner hasn't hidden, unless the Website tab is set to
+// "Default videos" or Instagram hasn't answered for IG_STALE_HOURS: then it shows the built-in videos.
+
+// timers belong to whoever runs setup (after the handover: Rev Auto's account)
+function installTriggers() {
+  ScriptApp.getProjectTriggers().filter((t) => ["syncInstagram", "refreshInstagramToken"].indexOf(t.getHandlerFunction()) >= 0)
+    .forEach((t) => ScriptApp.deleteTrigger(t));
+  ScriptApp.newTrigger("syncInstagram").timeBased().everyHours(1).create();
+  ScriptApp.newTrigger("refreshInstagramToken").timeBased().everyWeeks(1).onWeekDay(ScriptApp.WeekDay.MONDAY).atHour(4).create();
+}
+
+function syncInstagram() {
+  const token = prop("IG_TOKEN");
+  if (!token) return { ok: false, error: "not connected" };
+  try {
+    const fields = "id,caption,media_type,media_product_type,media_url,thumbnail_url,permalink,timestamp";
+    const r = UrlFetchApp.fetch("https://graph.instagram.com/me/media?limit=50&fields=" + fields + "&access_token=" + encodeURIComponent(token), { muteHttpExceptions: true });
+    let j = null; try { j = JSON.parse(r.getContentText()); } catch (err) { /* not JSON */ }
+    if (r.getResponseCode() !== 200 || !j || !Array.isArray(j.data)) throw new Error(igError(j, r.getResponseCode()));
+    const reels = igPick(j.data);
+    const now = new Date().toISOString();
+    withLock(() => {
+      const sh = sheet("Instagram");
+      if (sh.getLastRow() > 1) sh.getRange(2, 1, sh.getLastRow() - 1, TABS.Instagram.length).clearContent();
+      if (reels.length) {
+        const range = sh.getRange(2, 1, reels.length, TABS.Instagram.length);
+        range.setNumberFormat("@");                                 // plain text: long ids and dates stay exactly as sent
+        range.setValues(reels.map((m) => [m.id, m.posted, m.caption, m.link, m.thumb, m.video, now].map(safeCell)));
+      }
+      if (!sh.isSheetHidden()) sh.hideSheet();
+    });
+    const P = PropertiesService.getScriptProperties();
+    P.setProperty("IG_LAST_OK", String(Date.now()));
+    P.deleteProperty("IG_LAST_ERROR"); P.deleteProperty("IG_ALERTED");
+    CacheService.getScriptCache().remove("content");
+    return { ok: true, count: reels.length };
+  } catch (err) {
+    igFailed(String(err && err.message || err));
+    return { ok: false, error: String(err && err.message || err) };
+  }
+}
+
+// Instagram's answer -> the reels we can show (videos only, links checked, captions tidied)
+function igPick(data) {
+  return data.filter((m) => m && m.media_type === "VIDEO" && (!m.media_product_type || m.media_product_type === "REELS"))
+    .filter((m) => /^\d{5,30}$/.test(String(m.id)) && IG_CDN.test(String(m.media_url || "")))
+    .slice(0, IG_KEEP)
+    .map((m) => ({
+      id: String(m.id), posted: clean(m.timestamp, 30), caption: igCaption(m.caption),
+      link: /^https:\/\/(www\.)?instagram\.com\/[\w\/.-]+$/.test(String(m.permalink || "")) ? String(m.permalink) : "",
+      thumb: IG_CDN.test(String(m.thumbnail_url || "")) ? String(m.thumbnail_url) : "", video: String(m.media_url),
+    }));
+}
+
+// first line of the post, without hashtags, kept short for the video strip
+function igCaption(text) {
+  const line = String(text || "").split(/\n/).map((l) => l.replace(/#[^\s#]+/g, "").replace(/\s+/g, " ").trim()).find(Boolean) || "";
+  if (line.length <= 140) return clean(line, 140);
+  return clean(line.slice(0, 139).replace(/\s+\S*$/, ""), 139) + "…";
+}
+
+function igError(j, code) {
+  const e = j && j.error;
+  if (e && (e.code === 190 || e.type === "OAuthException")) return "Instagram access expired or was removed (reconnect: HANDOVER.md step 5)";
+  return "Instagram didn't answer properly (" + (e && e.message ? clean(e.message, 160) : "HTTP " + code) + ")";
+}
+
+// remember the problem; email the shop once when the website has had to switch to its own videos
+function igFailed(message) {
+  const P = PropertiesService.getScriptProperties();
+  P.setProperty("IG_LAST_ERROR", Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd HH:mm") + " · " + clean(message, 300));
+  CacheService.getScriptCache().remove("content");
+  if (igHealthy() || prop("IG_ALERTED")) return;
+  P.setProperty("IG_ALERTED", "1");
+  if (MailApp.getRemainingDailyQuota() > 15) try {
+    MailApp.sendEmail({ to: SHOP_EMAIL(), name: "Rev Auto website", subject: "Instagram stopped updating the website",
+      htmlBody: `<div style="font-family:Arial,sans-serif;max-width:560px;color:#111"><h2 style="margin:0 0 8px">Instagram stopped updating the website</h2>
+        <p>The website can't get your latest reels right now, so the <b>From the shop floor</b> strip is showing its built-in videos. Nothing is broken for visitors.</p>
+        <p style="background:#f6f4ee;padding:12px;border-radius:8px">${esc(message)}</p>
+        <p>Most often the Instagram access needs to be reconnected (HANDOVER.md, step 5). The dashboard's <b>Website</b> tab shows the status and has a <b>Check now</b> button.</p>
+        <p style="color:#666;font-size:13px">You'll get this email once. It resets as soon as Instagram works again.</p></div>` });
+  } catch (err) { console.error("instagram alert email failed", err); }
+}
+
+// Instagram tokens last 60 days; renewing weekly keeps it going for as long as the account is connected
+function refreshInstagramToken() {
+  const token = prop("IG_TOKEN");
+  if (!token) return { ok: false, error: "not connected" };
+  const r = UrlFetchApp.fetch("https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=" + encodeURIComponent(token), { muteHttpExceptions: true });
+  let j = null; try { j = JSON.parse(r.getContentText()); } catch (err) { /* not JSON */ }
+  if (r.getResponseCode() !== 200 || !j || !j.access_token) {
+    const msg = "Couldn't renew the Instagram access: " + igError(j, r.getResponseCode());
+    console.error(msg); igFailed(msg);
+    return { ok: false, error: msg };
+  }
+  const P = PropertiesService.getScriptProperties();
+  P.setProperty("IG_TOKEN", String(j.access_token));
+  P.setProperty("IG_TOKEN_EXPIRES", String(Date.now() + Number(j.expires_in || 5184000) * 1000));
+  return { ok: true };
+}
+
+function igHealthy() { return !!prop("IG_TOKEN") && Date.now() - Number(prop("IG_LAST_OK") || 0) < IG_STALE_HOURS * 3600000; }
+
+function igRows() {
+  const sh = sheet("Instagram"), n = sh.getLastRow() - 1;
+  if (n < 1) return [];
+  return sh.getRange(2, 1, Math.min(n, IG_KEEP), TABS.Instagram.length).getValues()
+    .map((r) => ({ id: String(r[0]), posted: String(r[1]), caption: String(r[2]), link: String(r[3]), thumb: String(r[4]), video: String(r[5]) }))
+    .filter((m) => m.id && IG_CDN.test(m.video));
+}
+
+// what the website gets: null = use the built-in videos
+function publicReels(content) {
+  const s = content && content.sections && content.sections.reels;
+  if ((s && s.source === "default") || !igHealthy()) return null;
+  const hidden = (s && Array.isArray(s.hidden)) ? s.hidden : [];
+  const list = igRows().filter((m) => hidden.indexOf(m.id) < 0).slice(0, IG_SHOW)
+    .map((m) => ({ id: m.id, video: m.video, thumb: m.thumb, caption: m.caption, link: m.link }));
+  return list.length ? list : null;
+}
+
+// for the dashboard's Website tab
+function igStatus() {
+  const at = (k) => { const n = Number(prop(k) || 0); return n ? Utilities.formatDate(new Date(n), Session.getScriptTimeZone(), "yyyy-MM-dd'T'HH:mm") : ""; };
+  return { connected: !!prop("IG_TOKEN"), healthy: igHealthy(), lastOk: at("IG_LAST_OK"), expires: at("IG_TOKEN_EXPIRES"),
+    lastError: prop("IG_LAST_ERROR"), show: IG_SHOW, reels: prop("IG_TOKEN") ? igRows() : [] };
 }
 
 // ---------- stats (Events + Bookings for the current period and the one before it)

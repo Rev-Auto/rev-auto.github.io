@@ -59,7 +59,7 @@ Share the passcode with Mr. Uriel in person or by private message. After 20 wron
 ## Changing the script later
 
 1. Paste in the new `Code.gs` and save.
-2. In the function menu choose **setup** and click **▶ Run** again. Google asks for new permissions this time (**Gmail** to send the booking emails, **Drive** for the photos): click **Review permissions → Advanced → Go to RevAuto website (unsafe) → Allow**.
+2. In the function menu choose **setup** and click **▶ Run** again. Google may ask for new permissions (**Gmail** to send the booking emails, **Drive** for the photos, **external service** and **run when you are not present** for the hourly Instagram check): click **Review permissions → Advanced → Go to RevAuto website (unsafe) → Allow**.
 3. Click **Deploy → Manage deployments → ✏️ Edit**, set **Version** to **New version**, and click **Deploy**.
 4. The URL stays the same, so the website doesn't need to change.
 
@@ -69,5 +69,6 @@ Share the passcode with Mr. Uriel in person or by private message. After 20 wron
 |---|---|---|
 | `SHOP_EMAIL` | Where booking emails go | `revautosrq@gmail.com` |
 | `SITE_URL` | The website's address (used in emails) | `https://rev-auto.github.io/` |
+| `IG_TOKEN` | Instagram access for the video strip (HANDOVER.md, step 5). Renewed by the script every Monday. | none: built-in videos |
 
 Emails are sent from the Google account that owns the script, with **Reply-to** set so the customer's replies reach the shop. A free Gmail account can send about 100 emails a day this way.

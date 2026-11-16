@@ -197,6 +197,24 @@ input[type=search] { padding: 7px 12px; border-radius: 10px; border: 1px solid v
 .ed__upload input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 .ed__restore { min-width: 260px; }
 .ed__note { margin: 0; font-size: .8rem; color: var(--muted); }
+/* Instagram reels (From the shop floor) */
+.ed__src { max-width: 520px; }
+.ed__ig { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--ring); background: var(--page); font-size: .88rem; color: var(--ink2); }
+.ed__ig small { flex-basis: 100%; color: var(--muted); }
+.ed__ig .btn { margin-left: auto; padding: 6px 14px; }
+.ed__ig--ok { border-color: color-mix(in srgb, var(--good) 45%, transparent); }
+.ed__ig--ok b { color: var(--good); }
+.ed__ig--bad { border-color: color-mix(in srgb, var(--warning) 60%, transparent); }
+.ed__thumb--tall { aspect-ratio: 9 / 14; }
+.ed__thumb--tall .ed__badge--on, .ed__thumb--tall .ed__badge--off, .ed__thumb--tall .ed__badge--big { top: 6px; bottom: auto; }
+.ed__badge--on { left: auto; right: 6px; background: var(--good); color: #fff; }
+.ed__badge--off { left: auto; right: 6px; background: var(--critical); color: #fff; }
+.ed__tile.is-hidden .ed__thumb img { opacity: .4; filter: grayscale(1); }
+.ed__cap { margin: 0; font-size: .82rem; color: var(--ink2); overflow-wrap: anywhere; }
+.ed__igrow { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: .82rem; }
+.ed__igrow a { color: var(--gold); }
+.ed__switch { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; cursor: pointer; }
+.ed__switch input { width: 18px; height: 18px; accent-color: var(--gold); }
 .ed__bar { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 40; width: min(980px, calc(100% - 24px)); display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
            padding: 10px 12px 10px 18px; border-radius: 16px; background: var(--surface); border: 1px solid var(--ring); box-shadow: 0 18px 40px -18px rgba(0, 0, 0, .45); }
 .ed__bar.is-dirty { border-color: var(--gold); }

@@ -10,7 +10,7 @@ Family-owned collision & body repair, 2133 19th St, Sarasota, FL. Static site (G
 - Photos/videos by hand: put files in `assets/media/` and list them in `assets/media/gallery.json`, e.g. `[{"src": "bumper-before-after.jpg", "alt": "Bumper repair"}]` (the first item shows large).
 - Logo: "Rev Auto · Luxe Paint & Repair" in `assets/img/logo-luxe-*.png`: full logo in the hero and footer, the `-word` version in the header; `-light` for the Showroom theme, `-dark` for Garage/Midnight. To replace it: `python3 tools/make_logos.py "<logo on black>.png"` makes all four plus the phone icon.
 - Mr. Uriel's cartoon persona: `assets/img/mr-uriel.png` (owner card) and `mr-uriel-96.png` (chat button).
-- Reels strip ("From the shop floor"): clips in `assets/media/reels/` listed in `assets/media/reels.json`.
+- Reels strip ("From the shop floor"): the newest 12 reels from @revautosrq, pulled every hour by the Sheet's script once Instagram is connected (`apps-script/HANDOVER.md`, step 5). The owner hides any from the dashboard's Website tab, or switches to **Default videos**. Those built-in clips (`assets/media/reels/`, listed in `assets/media/reels.json`) also show whenever Instagram isn't connected or answering, or a video won't load.
 - QR codes (they open the old address, which forwards to https://rev-auto.github.io/): `qr/revauto-qr-gold-on-black.png`, `qr/revauto-qr-print.png` (for printing), `qr/revauto-qr-plain.svg` (any size).
 
 ## Themes

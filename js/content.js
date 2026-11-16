@@ -46,7 +46,9 @@
         services: { nav: "Services", kicker: "Services", title: "Bodywork is our specialty. Cars are our whole world.", text: "",
           items: (K.services || []).map((s) => ({ icon: s.icon, title: s.name, text: s.short, id: s.id })) },
         work: { nav: "Our work", kicker: "Our work", title: "Before, after, and everything in between.", text: "", items: [] },
-        reels: { nav: "", kicker: "From the shop floor", title: "Watch the work happen", text: "", items: [] },
+        // source "instagram": newest reels from @revautosrq (hidden = Instagram ids the owner switched off);
+        // "default", or Instagram unavailable: the built-in videos in items
+        reels: { nav: "", kicker: "From the shop floor", title: "Watch the work happen", text: "", items: [], source: "instagram", hidden: [] },
         how: { nav: "", kicker: "How it works", title: "Three steps back to the road.", text: "", items: [
           { icon: "camera", title: "Book or send photos", text: "Pick a time online and add photos of the damage to your request.", id: "" },
           { icon: "search", title: "Get an honest estimate", text: "Free. We inspect the car and tell you honestly what it needs, and what it doesn't.", id: "" },
@@ -85,7 +87,22 @@
       if (typeof L.text === "string") out.sections[k].text = L.text;
       if (Array.isArray(L.items) && def.sections[k].items) out.sections[k].items = L.items;
     });
+    const LR = (live.sections || {}).reels;
+    if (LR) {
+      out.sections.reels.source = LR.source === "default" ? "default" : "instagram";
+      out.sections.reels.hidden = Array.isArray(LR.hidden) ? LR.hidden.map(String) : [];
+    }
     return out;
+  }
+
+  // ---------- Instagram reels (sent by the Sheet with the content; null = show the built-in videos)
+  const IG_CDN = /^https:\/\/[\w.-]+\.(cdninstagram\.com|fbcdn\.net)\/[^\s"'<>()\\]+$/;
+  const igList = (list) => (Array.isArray(list) ? list.filter((m) => m && IG_CDN.test(m.video) && (!m.thumb || IG_CDN.test(m.thumb)))
+    .map((m) => ({ id: String(m.id), video: m.video, thumb: m.thumb || "", caption: String(m.caption || ""), link: String(m.link || "") })) : []);
+  // the strip's videos: Instagram's when it's on and has any, otherwise the built-in ones
+  function reelsFor(c, ig) {
+    const r = c.sections.reels, list = r.source === "default" ? [] : igList(ig);
+    return list.length ? list : r.items;
   }
 
   // media path for the website (root "") or the dashboard (root "../")
@@ -101,8 +118,9 @@
   }
 
   // published content, cached on this device so repeat visits show it immediately
-  const CACHE = "rev.content";
+  const CACHE = "rev.content", IG = "rev.ig";
   function cached() { try { return JSON.parse(localStorage.getItem(CACHE) || "null"); } catch { return null; } }
+  function cachedIg() { try { return JSON.parse(localStorage.getItem(IG) || "null"); } catch { return null; } }
   // Each device asks the Sheet for changes at most every 5 minutes (keeps the free Google quota for busy days).
   const FRESH = 5 * 60 * 1000;
   async function fetchLive() {
@@ -113,13 +131,15 @@
       const r = await fetch(R.sheetsUrl + "?a=content", { signal: ctrl && ctrl.signal });
       const j = await r.json();
       try { localStorage.setItem(CACHE + ".at", String(Date.now())); } catch {}
-      if (j && j.ok && j.content) { try { localStorage.setItem(CACHE, JSON.stringify(j.content)); } catch {} return j.content; }
-      if (j && j.ok && !j.content) { try { localStorage.removeItem(CACHE); } catch {} }
-      return null;
+      if (!j || !j.ok) return null;
+      try { j.content ? localStorage.setItem(CACHE, JSON.stringify(j.content)) : localStorage.removeItem(CACHE); } catch {}
+      try { j.instagram ? localStorage.setItem(IG, JSON.stringify(j.instagram)) : localStorage.removeItem(IG); } catch {}
+      return { content: j.content || null, instagram: j.instagram || null };
     } catch { return null; } finally { clearTimeout(t); }
   }
   // dashboard preview: ?preview shows the unpublished draft saved on this device by the editor
   function draft() { try { return new URLSearchParams(location.search).has("preview") ? JSON.parse(localStorage.getItem("rev.draft") || "null") : null; } catch { return null; } }
+  function draftIg() { try { return JSON.parse(localStorage.getItem("rev.draft.ig") || "null"); } catch { return null; } }
 
   // the chatbot answers from the same content
   function teachBot(c) {
@@ -134,5 +154,5 @@
     KB.faq = c.sections.faq.items.map((f) => [f.q, f.a]);
   }
 
-  window.RevContent = { ICONS, ICON_LABELS, icon, base, withMedia, merge, mediaUrl, avatarUrl, cached, fetchLive, draft, teachBot };
+  window.RevContent = { ICONS, ICON_LABELS, icon, base, withMedia, merge, mediaUrl, avatarUrl, cached, cachedIg, fetchLive, draft, draftIg, igList, reelsFor, teachBot };
 })();

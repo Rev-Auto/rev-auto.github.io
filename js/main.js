@@ -131,13 +131,21 @@
   }
   addEventListener("resize", fill);
 
-  // reels: clips load and play only while on screen; the strip drifts along by itself until someone touches it
-  let reelTimer = null;
-  function renderReels(reels) {
+  // reels: clips load and play only while on screen; the strip drifts along by itself until someone touches it.
+  // Instagram reels stream from Instagram; if one won't load, the strip switches to the built-in videos for this visit.
+  let reelTimer = null, igBroken = false, reelsBackup = [];
+  const reelUrls = (m) => m.video ? { pic: m.thumb, video: m.video }
+    : { pic: `assets/media/reels/${encodeURIComponent(m.src)}.jpg`, video: `assets/media/reels/${encodeURIComponent(m.src)}.mp4` };
+  function renderReels(reels, backup) {
     const wrap = $(".reels"), track = $("#reels");
+    reelsBackup = backup || [];
     if (!reels.length) { wrap.hidden = true; return; }
     wrap.hidden = false;
-    track.innerHTML = reels.map((m) => `<figure class="reel"><div class="reel__bg" style="background-image:url('assets/media/reels/${encodeURIComponent(m.src)}.jpg')"></div><video muted loop playsinline preload="none" poster="assets/media/reels/${encodeURIComponent(m.src)}.jpg" data-src="assets/media/reels/${encodeURIComponent(m.src)}.mp4" aria-label="${esc(m.caption)}"></video><figcaption>${esc(m.caption)}</figcaption></figure>`).join("");
+    track.innerHTML = reels.map((m) => { const u = reelUrls(m); return `<figure class="reel${m.video ? " reel--ig" : ""}">${u.pic ? `<div class="reel__bg" style="background-image:url('${esc(u.pic)}')"></div>` : ""}<video muted loop playsinline preload="none"${u.pic ? ` poster="${esc(u.pic)}"` : ""} data-src="${esc(u.video)}" aria-label="${esc(m.caption)}"></video><figcaption>${esc(m.caption)}</figcaption></figure>`; }).join("");
+    if (reels[0].video) track.querySelectorAll("video").forEach((v) => v.addEventListener("error", () => {
+      if (igBroken || !reelsBackup.length) return;
+      igBroken = true; renderReels(reelsBackup);
+    }, { once: true }));
     const io = new IntersectionObserver((es) => es.forEach(({ target: v, isIntersecting }) => {
       if (isIntersecting) { if (!v.src) v.src = v.dataset.src; v.play().catch(() => {}); } else v.pause();
     }), { threshold: 0.6 });
@@ -158,13 +166,14 @@
     }, 3500);
   }
 
-  function render(c) {
-    const sig = JSON.stringify(c);
+  function render(c, ig) {
+    const reels = igBroken ? c.sections.reels.items : C.reelsFor(c, ig);
+    const sig = JSON.stringify([c, reels]);
     if (current === sig) return;
     current = sig;
     renderText(c);
     renderGallery(c.sections.work.items);
-    renderReels(c.sections.reels.items);
+    renderReels(reels, c.sections.reels.items);
   }
 
   // 1) defaults + whatever this device saw last time, right away; 2) the latest published version from the Sheet
@@ -172,13 +181,13 @@
     const preview = C.draft();
     if (preview) {
       document.body.insertAdjacentHTML("afterbegin", `<div class="preview-bar">Preview of unpublished changes · <a href="./">see the live site</a></div>`);
-      return render(C.merge(await C.withMedia(C.base(), ""), preview));
+      return render(C.merge(await C.withMedia(C.base(), ""), preview), C.draftIg());
     }
     renderText(C.merge(C.base(), C.cached()));
     const def = await C.withMedia(C.base(), "");
-    render(C.merge(def, C.cached()));
+    render(C.merge(def, C.cached()), C.cachedIg());
     const live = await C.fetchLive();
-    if (live) render(C.merge(def, live));
+    if (live) render(C.merge(def, live.content), live.instagram);
   })();
 
   $("#addr").textContent = R.address; $("#footAddr").textContent = R.address;
