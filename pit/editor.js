@@ -5,7 +5,7 @@
   const C = window.RevContent, $ = (s, el = document) => el.querySelector(s);
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const DRAFT = "rev.draft";
-  let def = null, doc = null, saved = "", history = [], busy = false;
+  let def = null, doc = null, saved = "", history = [], busy = false, ig = null;   // ig: Instagram status + reels from the Sheet
 
   // what the owner can edit, top of the page to the bottom
   const PARTS = [
@@ -34,6 +34,42 @@
   const head = (key, withText = true) => `<div class="ed__head">${NAV[key] ? field(`sections.${key}.nav`, "Menu label", { max: 24 }) : ""}
       ${field(`sections.${key}.kicker`, "Small heading", { max: 60 })}${field(`sections.${key}.title`, "Big heading", { max: 140 })}
       ${withText ? field(`sections.${key}.text`, "Intro line <small>(optional)</small>", { max: 500, area: true }) : ""}</div>`;
+
+  // ---------- Instagram reels (From the shop floor)
+  const igOn = () => doc.sections.reels.source !== "default";
+  // the reels the website will show with the current (unpublished) choices; [] = the default videos
+  const igVisible = () => (ig && ig.healthy && igOn() ? ig.reels.filter((m) => !doc.sections.reels.hidden.includes(m.id)).slice(0, ig.show || 12) : []);
+  const ago = (iso) => {
+    const m = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+    return !iso || isNaN(m) ? "never" : m < 2 ? "just now" : m < 60 ? `${m} min ago` : m < 2880 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} days ago`;
+  };
+  const day = (iso) => { const d = new Date(iso); return isNaN(d) ? "" : d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }); };
+
+  function igPanel() {
+    const r = doc.sections.reels, shown = igVisible(), shownIds = shown.map((m) => m.id);
+    const pick = `<label class="ed__f ed__src"><span>Videos on the website</span><select data-p="sections.reels.source">
+        <option value="instagram"${igOn() ? " selected" : ""}>Instagram: newest reels from @revautosrq (automatic)</option>
+        <option value="default"${igOn() ? "" : " selected"}>Default videos (the list further down)</option></select></label>`;
+    let status;
+    if (!ig || !ig.connected) status = `<div class="ed__ig ed__ig--off"><b>Instagram isn't connected yet.</b> The website shows the default videos. Connecting takes about 15 minutes, once (ask Freeman, or see HANDOVER.md step 5).</div>`;
+    else if (!ig.healthy) status = `<div class="ed__ig ed__ig--bad"><b>⚠ Instagram isn't answering</b> (last good check: ${esc(ago(ig.lastOk))}). The website is showing the default videos until it's back.${ig.lastError ? `<small>${esc(ig.lastError)}</small>` : ""}
+        <button type="button" class="btn btn--ghost" data-ig-sync="1">Check now</button></div>`;
+    else status = `<div class="ed__ig ed__ig--ok"><b>✓ Instagram connected</b><span>Checked ${esc(ago(ig.lastOk))} (every hour)${ig.expires ? ` · access renews by itself, good until ${esc(day(ig.expires))}` : ""}</span>
+        <button type="button" class="btn btn--ghost" data-ig-sync="1">Check now</button></div>`;
+    let out = pick + status;
+    if (ig && ig.connected && ig.reels.length) {
+      out += `<h4>Your Instagram reels <small>(${shown.length} of ${ig.show || 12} on the website${igOn() ? "" : ": switched off above"})</small></h4>
+        <p class="ed__note">New reels appear on their own. Switch off any you don't want on the website; the next newest one takes its place.</p>
+        <div class="ed__media">${ig.reels.map((m) => {
+          const hid = r.hidden.includes(m.id), on = shownIds.includes(m.id);
+          const tag = on ? `<span class="ed__badge ed__badge--on">On the website</span>` : hid ? `<span class="ed__badge ed__badge--off">Hidden</span>` : `<span class="ed__badge ed__badge--big">${igOn() && ig.healthy ? `Not in the newest ${ig.show || 12}` : "Not showing"}</span>`;
+          return `<div class="ed__tile${hid ? " is-hidden" : ""}"><div class="ed__thumb ed__thumb--tall">${m.thumb ? `<img src="${esc(m.thumb)}" alt="" loading="lazy" referrerpolicy="no-referrer" />` : ""}<span class="ed__badge">▶ ${esc(day(m.posted))}</span>${tag}</div>
+            <p class="ed__cap">${esc(m.caption || "(no caption)")}</p>
+            <div class="ed__igrow"><label class="ed__switch"><input type="checkbox" data-ig-hide="${esc(m.id)}"${hid ? "" : " checked"} /> Show on website</label>${m.link ? `<a href="${esc(m.link)}" target="_blank" rel="noopener">Open ↗</a>` : ""}</div></div>`;
+        }).join("")}</div>`;
+    }
+    return out + `<h4>Default videos</h4><p class="ed__note">Shown when "Default videos" is chosen above, or whenever Instagram isn't connected or answering, so the strip is never empty.</p>`;
+  }
 
   function body(p) {
     if (p.kind === "hero") {
@@ -66,16 +102,17 @@
           <div class="ed__grow">${field(`${list}.${i}.q`, "Question", { max: 160 })}${field(`${list}.${i}.a`, "Answer", { max: 800, area: true, rows: 3 })}</div>${tools(list, i, n)}</div>`).join("")}</div>
         <button type="button" class="btn btn--ghost ed__add" data-act="add" data-l="${list}">＋ Add a question</button>`;
     }
+    if (p.kind === "reels") out += igPanel();
     if (p.kind === "media" || p.kind === "reels") {
       const thumb = (m) => p.kind === "reels" ? `../assets/media/reels/${encodeURIComponent(m.src)}.jpg`
         : /\.(mp4|webm|mov)$/i.test(m.src) ? (m.poster ? C.mediaUrl(m.poster, "../") : "") : C.mediaUrl(m.src, "../", 400);
-      out += `<h4>${p.kind === "reels" ? "Videos" : "Photos"} <small>(${n})</small></h4><div class="ed__media">${items.map((m, i) => `<div class="ed__tile">
+      out += `${p.kind === "reels" ? "" : `<h4>Photos <small>(${n})</small></h4>`}<div class="ed__media">${items.map((m, i) => `<div class="ed__tile">
           <div class="ed__thumb">${thumb(m) ? `<img src="${esc(thumb(m))}" alt="" loading="lazy" referrerpolicy="no-referrer" />` : ""}${/\.(mp4|webm|mov)$/i.test(m.src) || p.kind === "reels" ? `<span class="ed__badge">▶ video</span>` : ""}${i === 0 && p.kind === "media" ? `<span class="ed__badge ed__badge--big">shows large</span>` : ""}</div>
           ${field(`${list}.${i}.caption`, "Caption", { max: p.kind === "reels" ? 140 : 120 })}${tools(list, i, n)}</div>`).join("")}</div>`;
       const removed = def.sections[p.key].items.filter((d) => !items.some((m) => m.src === d.src));
       out += `<div class="ed__mediaadd">${p.kind === "media" ? `<label class="btn btn--gold ed__upload"><input type="file" accept="image/*" multiple data-upload="${list}" />＋ Upload photos</label>` : ""}
         ${removed.length ? `<label class="ed__f ed__restore"><span>Add back ${p.kind === "reels" ? "a video" : "a photo"} you removed</span><select data-restore="${p.key}"><option value="">Choose…</option>${removed.map((d) => `<option value="${esc(d.src)}">${esc(d.caption || d.src)}</option>`).join("")}</select></label>` : ""}</div>
-        ${p.kind === "reels" ? `<p class="ed__note">New videos need to be added to the site's files (ask Freeman); here you can reorder, re-caption or hide them.</p>` : `<p class="ed__note">Photos are resized before uploading. They're stored in the shop's Google Drive and shown on the website.</p>`}`;
+        ${p.kind === "reels" ? `<p class="ed__note">New default videos need to be added to the site's files (ask Freeman); here you can reorder, re-caption or remove them.</p>` :`<p class="ed__note">Photos are resized before uploading. They're stored in the shop's Google Drive and shown on the website.</p>`}`;
     }
     return out;
   }
@@ -84,6 +121,7 @@
     if (p.kind === "hero") return "";
     if (p.kind === "about" || p.kind === "head") return "";
     const n = doc.sections[p.key].items.length;
+    if (p.kind === "reels" && igVisible().length) return `Instagram · ${igVisible().length} showing`;
     return `${n} ${p.kind === "faq" ? "question" : p.kind === "media" ? "photo" : p.kind === "reels" ? "video" : "tile"}${n === 1 ? "" : "s"}`;
   }
 
@@ -145,6 +183,7 @@
     root.addEventListener("input", (e) => {
       const p = e.target.dataset.p; if (!p) return;
       setAt(doc, p, e.target.value);
+      if (p === "sections.reels.source") { render(); return; }
       if (e.target.tagName === "SELECT") { const prev = e.target.closest(".ed__icon"); if (prev) prev.querySelector(".ed__iconprev").innerHTML = C.icon(e.target.value); }
       state();
     });
@@ -159,6 +198,17 @@
         render(); return;
       }
       if (e.target.closest("[data-act-avatar]")) { doc.owner.avatar = ""; render(); return; }
+      const sync = e.target.closest("[data-ig-sync]");
+      if (sync) {
+        sync.disabled = true; sync.textContent = "Checking…";
+        try {
+          const j = await RevPit.api({ action: "ig_sync" });
+          if (!j.ok) throw new Error(j.error);
+          ig = j.instagram || ig; render();
+          RevPit.toast(j.synced ? "Instagram checked ✓ The list is up to date." : "Instagram didn't answer. The website keeps showing the default videos.");
+        } catch (err) { RevPit.toast(err && err.message === "slow down" ? "Checked a lot already. Try again in a while." : "Couldn't check Instagram. Try again."); render(); }
+        return;
+      }
       const at = e.target.closest("[data-restore-at]");
       if (at && confirm(`Restore the version published ${at.dataset.restoreAt.replace("T", " ")}? It's published right away.`)) {
         busy = true; state();
@@ -166,10 +216,16 @@
         catch { RevPit.toast("Couldn't restore that version."); } finally { busy = false; state(); }
       }
       if (e.target.id === "edDiscard" && confirm("Throw away the unpublished changes?")) { doc = JSON.parse(saved); render(); }
-      if (e.target.id === "edPreview") { try { localStorage.setItem(DRAFT, JSON.stringify(doc)); } catch {} window.open("../?preview", "_blank", "noopener"); }
+      if (e.target.id === "edPreview") { try { localStorage.setItem(DRAFT, JSON.stringify(doc)); localStorage.setItem(DRAFT + ".ig", JSON.stringify(igVisible())); } catch {} window.open("../?preview", "_blank", "noopener"); }
       if (e.target.id === "edPublish") publish();
     });
     root.addEventListener("change", async (e) => {
+      const igId = e.target.dataset.igHide;
+      if (igId) {
+        const h = doc.sections.reels.hidden.filter((x) => x !== igId);
+        if (!e.target.checked) h.push(igId);
+        doc.sections.reels.hidden = h; render(); return;
+      }
       if (e.target.dataset.avatar) {
         const file = e.target.files[0]; e.target.value = "";
         if (!file || !/^image\//.test(file.type)) return;
@@ -222,6 +278,7 @@
     const j = await RevPit.api({ action: "content_get" });
     if (!j.ok) { $("#editor").innerHTML = `<p class="empty">Couldn't load the content. Try Refresh.</p>`; return; }
     history = j.history || [];
+    ig = j.instagram || null;
     doc = C.merge(def, j.content);
     saved = JSON.stringify(doc);
     let draft = null; try { draft = JSON.parse(localStorage.getItem(DRAFT) || "null"); } catch {}

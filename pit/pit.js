@@ -263,9 +263,17 @@
     if (body.action === "status") { return { ok: true }; }
     if (body.action === "approve") return { ok: true, emailed: true };
     if (body.action === "photos") return { ok: true, photos: [] };
-    if (body.action === "content_get") return { ok: true, content: null, history: [] };
+    if (body.action === "content_get" || body.action === "ig_sync") return { ok: true, synced: true, content: null, history: [], instagram: demoIg() };
     if (body.action === "content_save") return { ok: true, history: [new Date().toISOString().slice(0, 16)] };
     return { ok: true, sheetUrl: "", days: S.days, bookings: demoStore.bookings, stats: demoStats(S.days) };
+  }
+  // sample Instagram reels for ?demo (the shop's own clips stand in for Instagram's)
+  function demoIg() {
+    const clips = ["hellcat", "porsche-912", "supra-wing", "rim-match", "gv70-bumper", "audi-a6-dent", "bumper-install", "shelby-widebody", "range-rover-velar", "mercedes-g63", "audi-r8", "ford-raptor", "ram-trx", "bmw-330i"];
+    const iso = (h) => new Date(Date.now() - h * 3600000).toISOString().slice(0, 16);
+    return { connected: true, healthy: true, lastOk: iso(0.3), expires: iso(-24 * 55), lastError: "", show: 12,
+      reels: clips.map((c, i) => ({ id: "179000000000" + (10000 + i), posted: iso(30 + i * 70), caption: "Sample: " + c.replace(/-/g, " "), link: "https://www.instagram.com/revautosrq/",
+        thumb: "../assets/media/reels/" + c + ".jpg", video: "" })) };
   }
   function rnd(seed) { return () => ((seed = (seed * 16807) % 2147483647) / 2147483647); }
   function makeDemo() {
